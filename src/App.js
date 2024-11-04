@@ -1,11 +1,11 @@
-import './App.css';
+import TechniciansListScreen from "./pages/TechniciansListScreen";
 
 function App() {
-  return (
-    <div className="App">
-      
-    </div>
-  );
+    return (
+        <div>
+            <TechniciansListScreen />
+        </div>
+    );
 }
 
 export default App;
