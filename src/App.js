@@ -1,4 +1,5 @@
-import TechniciansListScreen from "./pages/TechniciansListScreen";
+import "./styles"
+import {TechniciansListScreen} from "./pages";
 
 function App() {
     return (

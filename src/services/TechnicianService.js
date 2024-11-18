@@ -1,5 +1,5 @@
 import axios from "axios";
-import {REST_API_TECHNICIANS_URL} from "../context/ApiUrl";
+import {REST_API_URLS} from "../context";
 
 export const listTechnician = () =>
-    axios.get(REST_API_TECHNICIANS_URL);
+    axios.get(REST_API_URLS.TECHNICIANS_URL);

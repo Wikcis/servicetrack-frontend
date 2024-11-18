@@ -1,0 +1,41 @@
+@import 'constants/colors.css';
+
+.sidebar {
+    height: 100vh;
+    width: 12%;
+    background-color: var(--primary);
+    overflow: hidden;
+}
+
+.sidebarList {
+    width: 100%;
+    padding: 0;
+}
+
+.sidebarList .row:hover {
+    cursor: pointer;
+    background-color: var(--secondary);
+}
+
+.sidebarList .row{
+    margin-top: 5%;
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebarList #active {
+    background-color: var(--secondary);
+}
+
+.row #icon {
+    display: grid;
+    place-items: center;
+}
+
+.row #title {
+    color: white;
+    font-family: var(--main-font), sans-serif;
+    display: grid;
+    place-items: center;
+}
