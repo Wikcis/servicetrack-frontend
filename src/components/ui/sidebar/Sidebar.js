@@ -5,7 +5,7 @@ export const Sidebar = () => {
     return (
         <div className="sidebar">
             <div className="logoContainer">
-                <Logo/>
+                <Logo />
             </div>
             <ul className="sidebarList">
                 {SidebarData.map((item, index) => {

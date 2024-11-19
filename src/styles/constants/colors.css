@@ -1,7 +1,9 @@
 :root {
     --primary: #478635;
     --secondary: #406F33;
-    --table-background: #FAFAFA;
-    --table-text: #525252;
-    --table-header-text: #5F5F5F;
+    --table-background: #fafafa;
+    --table-header-background: #efefef;
+    --table: #525252;
+    --table-scroll: #949292;
+    --hover: #f5f5f5;
 }

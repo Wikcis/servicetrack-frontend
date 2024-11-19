@@ -1,0 +1,10 @@
+@import "./constants/colors.css";
+
+.searchbarInput {
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 2%;
+    display: flex;
+    justify-content: center;
+}
+
