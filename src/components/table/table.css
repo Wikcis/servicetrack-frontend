@@ -1,18 +1,17 @@
-@import 'constants/colors.css';
-@import 'constants/fonts.css';
-
 .tableContainer {
-    width: 100%;
-    max-width: 1000px;
+    width: 95%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
     overflow-x: hidden;
     overflow-y: auto;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     border-radius: 16px;
-    position: relative;
 }
 
 table {
     width: 100%;
+    table-layout: fixed;
     border-collapse: collapse;
     border-spacing: 0;
     text-align: left;
@@ -28,6 +27,8 @@ thead {
 th, td {
     padding: 12px 20px;
     text-align: left;
+    word-wrap: break-word;
+    overflow: hidden;
     background-color: var(--table-header-background);
     color: var(--table);
     font-family: var(--main-font), sans-serif;
@@ -64,11 +65,6 @@ tbody tr {
 .tableContainer::-webkit-scrollbar:horizontal {
     display: none;
 }
-
-.tableContainer:hover {
-    overflow-y: scroll;
-}
-
 
 .loading, .error, .no-data {
     text-align: center;

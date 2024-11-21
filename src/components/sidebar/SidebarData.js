@@ -1,4 +1,4 @@
-import {ClientsIcon, ServiceOrdersIcon} from "../../../assets"
+import {ClientsIcon, ServiceOrdersIcon} from "../../assets"
 
 export const SidebarData = [
     {

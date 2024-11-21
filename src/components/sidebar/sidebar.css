@@ -1,12 +1,3 @@
-@import 'constants/colors.css';
-
-.sidebarContainer {
-    display: flex;
-    flex-direction: row;
-    height: 100vh;
-    width: 100vw;
-}
-
 .sidebar {
     height: 100%;
     width: 12%;

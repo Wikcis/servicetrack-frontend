@@ -1,5 +1,10 @@
-import {Sidebar} from "../components/ui";
-import {Searchbar, Table} from "../components/form"
+import {
+    CustomButton,
+    Sidebar,
+    Searchbar,
+    Table,
+    UserBar
+} from "../components"
 import React, {useEffect, useState} from "react";
 import {listTechnician} from "../services";
 
@@ -62,11 +67,17 @@ export const TechniciansListScreen = () => {
     }
 
     return (
-        <div className="sidebarContainer">
+        <div className="app">
             <Sidebar/>
             <div className="mainContainer">
-                <Searchbar onSearch={(input) => setSearchInput(input)} />
-                <Table data={filteredTechnicians} />
+                <UserBar/>
+                <div className="aboveTableContainer">
+                    <Searchbar onSearch={(input) => setSearchInput(input)}/>
+                    <CustomButton className="addButton">
+                        text
+                    </CustomButton>
+                </div>
+                <Table data={filteredTechnicians}/>
             </div>
         </div>
 
