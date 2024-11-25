@@ -1,26 +1,64 @@
-import React from "react";
+import React, {Fragment} from "react";
 import {useTable} from "react-table";
 import {CustomCheckbox} from "../checkbox/CustomCheckbox"
+import {IconButtonsContainer} from "../iconButton/IconButtonsContainer";
 
-export const Table = ({data}) => {
+export const Table = ({data, serviceOrders}) => {
+
+    const countServiceOrders = React.useCallback((row) => {
+        const technicianId = row.original.id;
+        return serviceOrders.filter((serviceOrder) => serviceOrder.technicianId === technicianId).length;
+    }, [serviceOrders]);
 
     const columns = React.useMemo(() => [
         {
             Header: "",
             accessor: "checkBox",
-            style: {maxWidth: "50px", minWidth: "10px", width: "50px"},
+            style: {width: "8%"},
+            Cell: () => <CustomCheckbox/>
         },
-        {Header: "First Name", accessor: "firstName"},
-        {Header: "Last Name", accessor: "lastName"},
-        {Header: "Phone number", accessor: "phoneNumber"},
-        {Header: "Email", accessor: "email"},
-    ], []);
+        {
+            Header: "First Name",
+            accessor: "firstName",
+            style: {width: "15%"},
+        },
+        {
+            Header: "Last Name",
+            accessor: "lastName",
+            style: {width: "20%"},
+        },
+        {
+            Header: "Phone number",
+            accessor: "phoneNumber",
+            style: {width: "12%"},
+        },
+        {
+            Header: "Email",
+            accessor: "email",
+            style: {width: "22%"},
+        },
+        {
+            Header: "Number of Services",
+            accessor: "numberOfServices",
+            style: {width: "10%"},
+            Cell: ({row}) => (
+                <Fragment>
+                    {countServiceOrders(row)}
+                </Fragment>
+            )
+        },
+        {
+            Header: "",
+            accessor: "edition",
+            style: {width: "12%"},
+            Cell: () => <IconButtonsContainer/>
+        },
+    ], [countServiceOrders]);
 
     const {getTableProps, getTableBodyProps, headerGroups, rows, prepareRow} = useTable({columns, data});
-
     return (
         <div className="tableContainer">
-            <table {...getTableProps()}>
+            <table {...getTableProps()} key={getTableProps.id}>
                 <thead>
                 {headerGroups.map(headerGroup => (
                     <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
@@ -37,14 +75,9 @@ export const Table = ({data}) => {
                     prepareRow(row)
                     return (
                         <tr {...row.getRowProps()} key={row.id}>
-                            {row.cells.map(cell => (
+                            {row.cells.map((cell) => (
                                 <td {...cell.getCellProps()} key={cell.column.id}>
-                                    {cell.column.id === "checkBox" ? (
-                                            <CustomCheckbox />
-                                        ) :
-                                        (
-                                            cell.render("Cell")
-                                        )}
+                                    {cell.render("Cell")}
                                 </td>
                             ))}
                         </tr>

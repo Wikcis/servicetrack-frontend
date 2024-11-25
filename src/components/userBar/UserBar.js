@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Fragment} from "react";
 import {Triangle} from "../../assets";
 
 export const UserBar = () => {
@@ -7,15 +7,15 @@ export const UserBar = () => {
         <div className="userBarContainer">
             <div className="userInfoContainer">
                 <div className="userNameContainer">
-                    <text>
+                    <Fragment>
                         Name
-                    </text>
+                    </Fragment>
                     <Triangle/>
                 </div>
-                <text>123123123</text>
+                <Fragment>123123123</Fragment>
             </div>
             <div className="contentNameContainer">
-                <text>All Technicians</text>
+                <Fragment>All Technicians</Fragment>
                 <hr className="contentNameLine"/>
             </div>
         </div>

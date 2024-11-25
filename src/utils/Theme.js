@@ -1,5 +1,5 @@
 import { createTheme } from "@mui/material";
-import { colors } from "../styles/constants/colors";
+import { colors } from "../styles";
 
 const createColor = (mainColor) => {
     const { palette } = createTheme();
@@ -9,5 +9,6 @@ const createColor = (mainColor) => {
 export const Theme = createTheme({
     palette: {
         primary: createColor(colors.primary),
+        iconButton: createColor(colors.icons),
     },
 });

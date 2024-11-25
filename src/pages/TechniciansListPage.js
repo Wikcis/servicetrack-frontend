@@ -6,9 +6,13 @@ import {
     UserBar
 } from "../components"
 import React, {useEffect, useState} from "react";
-import {listTechnician} from "../services";
+import {listTechnicians} from "../services";
+import "../styles"
+import {listServiceOrders} from "../services/ServiceOrdersService";
 
-export const TechniciansListScreen = () => {
+export const TechniciansListPage = () => {
+
+    const [serviceOrders, setServiceOrders] = useState([]);
     const [technicians, setTechnicians] = useState([]);
     const [filteredTechnicians, setFilteredTechnicians] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -16,7 +20,7 @@ export const TechniciansListScreen = () => {
     const [searchInput, setSearchInput] = useState("");
 
     useEffect(() => {
-        listTechnician()
+        listTechnicians()
             .then((response) => {
                 const data = response.data.technicians || [];
                 setTechnicians(data);
@@ -43,6 +47,17 @@ export const TechniciansListScreen = () => {
             })
         );
     }, [searchInput, technicians]);
+
+    useEffect(() => {
+        listServiceOrders()
+            .then((response) => {
+                const orders = response.data.serviceOrders || [];
+                setServiceOrders(orders);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }, []);
 
     if (loading) {
         return (
@@ -77,7 +92,10 @@ export const TechniciansListScreen = () => {
                         text
                     </CustomButton>
                 </div>
-                <Table data={filteredTechnicians}/>
+                <Table
+                    data={filteredTechnicians || []}
+                    serviceOrders={serviceOrders || []}
+                />
             </div>
         </div>
 
