@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom/client';
 import 'bootstrap/dist/css/bootstrap.css';
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {NotFoundPage, TechniciansListPage} from "./pages";
+import {ClientsListPage} from "./pages/ClientsListPage";
 
 const router = createBrowserRouter([
     {
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
     {
         path: "/technicians",
         element: <TechniciansListPage/>,
+    },
+    {
+        path: "/clients",
+        element: <ClientsListPage/>,
     }
 ])
 

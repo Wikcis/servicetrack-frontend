@@ -1,17 +1,13 @@
-import {CustomIconButton} from "./CustomIconButton";
-import {BinIcon, EditIcon} from "../../assets";
 import React from "react";
+import {IconEditButton} from "./IconEditButton";
+import {IconDeleteButton} from "./IconDeleteButton";
 
-export const IconButtonsContainer = () => {
+export const IconButtonsContainer = ({ type, row, refreshTable }) => {
+
     return (
         <div className="iconButton">
-            <CustomIconButton>
-                <EditIcon/>
-            </CustomIconButton>
-
-            <CustomIconButton>
-                <BinIcon/>
-            </CustomIconButton>
+            <IconEditButton type={type} row={row} refreshTable={refreshTable} />
+            <IconDeleteButton type={type} row={row} refreshTable={refreshTable}/>
         </div>
     )
 }

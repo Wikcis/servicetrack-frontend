@@ -7,55 +7,54 @@ import {
 } from "../components"
 import React, {useEffect, useState} from "react";
 import "../styles"
-import {listServiceOrders, listTechnicians} from "../services";
+import {listClients, listServiceOrders, listTechnicians} from "../services";
 import {Titles} from "../utils";
 
-export const TechniciansListPage = () => {
+export const ClientsListPage = () => {
 
     const [serviceOrders, setServiceOrders] = useState([]);
-    const [technicians, setTechnicians] = useState([]);
-    const [filteredTechnicians, setFilteredTechnicians] = useState([]);
+    const [clients, setClients] = useState([]);
+    const [filteredClients, setFilteredClients] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchInput, setSearchInput] = useState("");
 
     useEffect(() => {
-        const fetchTechnicians = async () => {
+        const fetchClients = async () => {
             try {
-                const response = await listTechnicians();
-                const data = response.data.technicians || [];
-                setTechnicians(data);
-                setFilteredTechnicians(data);
+                const response = await listClients();
+                const data = response.data.clients || [];
+                setClients(data);
+                setFilteredClients(data);
                 setLoading(false);
             } catch (error) {
                 console.error(error);
-                setError("Failed to fetch technicians. Please try again later.");
+                setError("Failed to fetch clients. Please try again later.");
                 setLoading(false);
             }
         };
-        fetchTechnicians();
+        fetchClients();
     }, []);
 
     useEffect(() => {
-        const search = searchInput === "" ? searchInput : searchInput.toLowerCase();
-        setFilteredTechnicians(
-            technicians.filter((technician) => {
+        const search = searchInput.toLowerCase();
+        setFilteredClients(
+            clients.filter((client) => {
                 return (
-                    technician.firstName.toLowerCase().includes(search) ||
-                    technician.lastName.toLowerCase().includes(search) ||
-                    technician.phoneNumber.toString().includes(search) ||
-                    technician.email.toLowerCase().includes(search)
+                    client.name.toLowerCase().includes(search) ||
+                    client.phoneNumber.toString().includes(search) ||
+                    client.email.toLowerCase().includes(search)
                 );
             })
         );
-    }, [searchInput, technicians]);
+    }, [searchInput, clients]);
 
     const refreshTable = async () => {
         try {
             const response = await listTechnicians();
             const data = response.data.technicians || [];
-            setTechnicians(data);
-            setFilteredTechnicians(data);
+            setClients(data);
+            setFilteredClients(data);
         } catch (err) {
             console.error("Failed to refresh table:", err);
         }
@@ -100,17 +99,17 @@ export const TechniciansListPage = () => {
         <div className="app">
             <Sidebar/>
             <div className="mainContainer">
-                <UserBar title={Titles.techniciansPageTitle}/>
+                <UserBar title="clients"/>
                 <div className="aboveTableContainer">
                     <Searchbar onSearch={(input) => setSearchInput(input)}/>
                     <CustomButton className="addButton">
-                        Add technician
+                        Add client
                     </CustomButton>
                 </div>
                 <Table
-                    data={filteredTechnicians}
+                    data={filteredClients}
                     serviceOrders={serviceOrders}
-                    type={Titles.techniciansPageTitle}
+                    type={Titles.clientsPageTitle}
                     refreshTable={refreshTable}
                 />
             </div>

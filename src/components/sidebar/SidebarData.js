@@ -1,6 +1,11 @@
-import {ClientsIcon, ServiceOrdersIcon} from "../../assets"
+import {ClientsIcon, ServiceOrdersIcon, TechnicianIcon} from "../../assets"
 
 export const SidebarData = [
+    {
+        title: "Technicians",
+        icon: <TechnicianIcon />,
+        link: "/technicians"
+    },
     {
         title: "Service Orders",
         icon: <ServiceOrdersIcon/>,

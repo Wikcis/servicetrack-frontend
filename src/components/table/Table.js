@@ -1,59 +1,32 @@
-import React, {Fragment} from "react";
+import React from "react";
 import {useTable} from "react-table";
-import {CustomCheckbox} from "../checkbox/CustomCheckbox"
-import {IconButtonsContainer} from "../iconButton/IconButtonsContainer";
+import {createClientColumns, createServiceOrdersColumns, createTechniciansColumns} from "./TableColumns";
+import {Titles} from "../../utils";
 
-export const Table = ({data, serviceOrders}) => {
+export const Table = ({data, serviceOrders, type, refreshTable}) => {
 
-    const countServiceOrders = React.useCallback((row) => {
-        const technicianId = row.original.id;
-        return serviceOrders.filter((serviceOrder) => serviceOrder.technicianId === technicianId).length;
-    }, [serviceOrders]);
+    const countServiceOrders = React.useCallback(
+        (row) => {
+            const id = row.original.id;
+            if (type === Titles.techniciansPageTitle) {
+                return serviceOrders.filter((order) => order.technicianId === id).length;
+            } else if (type === Titles.clientsPageTitle) {
+                return serviceOrders.filter((order) => order.clientId === id).length;
+            }
+            return 0;
+        },
+        [serviceOrders, type]
+    );
 
-    const columns = React.useMemo(() => [
-        {
-            Header: "",
-            accessor: "checkBox",
-            style: {width: "8%"},
-            Cell: () => <CustomCheckbox/>
-        },
-        {
-            Header: "First Name",
-            accessor: "firstName",
-            style: {width: "15%"},
-        },
-        {
-            Header: "Last Name",
-            accessor: "lastName",
-            style: {width: "20%"},
-        },
-        {
-            Header: "Phone number",
-            accessor: "phoneNumber",
-            style: {width: "12%"},
-        },
-        {
-            Header: "Email",
-            accessor: "email",
-            style: {width: "22%"},
-        },
-        {
-            Header: "Number of Services",
-            accessor: "numberOfServices",
-            style: {width: "10%"},
-            Cell: ({row}) => (
-                <Fragment>
-                    {countServiceOrders(row)}
-                </Fragment>
-            )
-        },
-        {
-            Header: "",
-            accessor: "edition",
-            style: {width: "12%"},
-            Cell: () => <IconButtonsContainer/>
-        },
-    ], [countServiceOrders]);
+    const columns = React.useMemo(() => {
+        if (type === Titles.techniciansPageTitle) {
+            return createTechniciansColumns(countServiceOrders, type, refreshTable);
+        } else if (type === Titles.clientsPageTitle) {
+            return createClientColumns(countServiceOrders, type, refreshTable);
+        } else if (type === Titles.serviceOrdersPageTitle) {
+            return createServiceOrdersColumns(type, refreshTable);
+        }
+    }, [countServiceOrders, type, refreshTable]);
 
     const {getTableProps, getTableBodyProps, headerGroups, rows, prepareRow} = useTable({columns, data});
     return (

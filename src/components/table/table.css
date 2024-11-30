@@ -26,15 +26,11 @@ thead {
 
 th, td {
     padding: 7px 10px;
+    text-align: center;
     overflow: hidden;
-    text-align: left;
     background-color: var(--table-header-background);
     color: var(--table);
     font-family: var(--main-font), sans-serif;
-}
-
-td {
-    text-align: center;
 }
 
 th {
