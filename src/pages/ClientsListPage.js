@@ -1,13 +1,7 @@
-import {
-    CustomButton,
-    Sidebar,
-    Searchbar,
-    Table,
-    UserBar
-} from "../components"
+import {CustomButton, Searchbar, Sidebar, Table, UserBar} from "../components"
 import React, {useEffect, useState} from "react";
 import "../styles"
-import {listClients, listServiceOrders, listTechnicians} from "../services";
+import {listClients, listServiceOrders} from "../services";
 import {Titles} from "../utils";
 
 export const ClientsListPage = () => {
@@ -37,7 +31,7 @@ export const ClientsListPage = () => {
     }, []);
 
     useEffect(() => {
-        const search = searchInput.toLowerCase();
+        const search = searchInput === "" ? searchInput : searchInput.toLowerCase();
         setFilteredClients(
             clients.filter((client) => {
                 return (
@@ -51,12 +45,12 @@ export const ClientsListPage = () => {
 
     const refreshTable = async () => {
         try {
-            const response = await listTechnicians();
-            const data = response.data.technicians || [];
+            const response = await listClients();
+            const data = response.data.clients || [];
             setClients(data);
             setFilteredClients(data);
         } catch (err) {
-            console.error("Failed to refresh table:", err);
+            setError("Failed to refresh table:", err);
         }
     };
 
@@ -67,7 +61,7 @@ export const ClientsListPage = () => {
                 const orders = response.data.serviceOrders || [];
                 setServiceOrders(orders);
             } catch (error) {
-                console.error(error);
+                setError(error);
             }
         };
         fetchServiceOrders();
@@ -99,7 +93,7 @@ export const ClientsListPage = () => {
         <div className="app">
             <Sidebar/>
             <div className="mainContainer">
-                <UserBar title="clients"/>
+                <UserBar title={Titles.clientsPageTitle}/>
                 <div className="aboveTableContainer">
                     <Searchbar onSearch={(input) => setSearchInput(input)}/>
                     <CustomButton className="addButton">

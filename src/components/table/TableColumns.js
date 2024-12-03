@@ -20,6 +20,24 @@ const emailColumn = {
     style: { width: "22%" },
 }
 
+const formatDateTime = (dateTime) => {
+    if (!dateTime) return "N/A";
+    try {
+        const date = new Date(dateTime);
+        return new Intl.DateTimeFormat("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+        }).format(date);
+    } catch {
+        return "Invalid Date";
+    }
+};
+
+
 export const createTechniciansColumns = (countServiceOrders, type, refreshTable) => [
 
     checkBoxColumn,
@@ -91,8 +109,8 @@ export const createServiceOrdersColumns = (countServiceOrders, type, refreshTabl
     },
     {
         Header: "Type of Service",
-        accessor: "typeOfService",
-        style: { width: "12%" },
+        accessor: "serviceType",
+        style: { width: "15%" },
     },
     {
         Header: "Service Format",
@@ -101,8 +119,11 @@ export const createServiceOrdersColumns = (countServiceOrders, type, refreshTabl
     },
     {
         Header: "Time of service",
-        accessor: "timeOfService",
+        accessor: "dateTimeOfService",
         style: { width: "12%" },
+        Cell: ({ row }) => (
+            <Fragment>{formatDateTime(row.original.dateTimeOfService)}</Fragment>
+        ),
     },
     {
         Header: "Status",
@@ -111,13 +132,13 @@ export const createServiceOrdersColumns = (countServiceOrders, type, refreshTabl
     },
     {
         Header: "Duration of service",
-        accessor: "durationOfService",
+        accessor: "serviceDuration",
         style: { width: "12%" },
     },
     {
         Header: "",
         accessor: "edition",
-        style: { width: "12%" },
+        style: { width: "8%" },
         Cell: ({ row }) => <IconButtonsContainer type={type} row={row} refreshTable={refreshTable} />,
     },
 ];

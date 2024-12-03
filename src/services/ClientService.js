@@ -6,3 +6,6 @@ export const listClients = () =>
 
 export const deleteClient = (clientId) =>
     axios.delete(REST_API_URLS.CLIENTS_URL+"/"+clientId);
+
+export const getClient = (clientId) =>
+    axios.get(REST_API_URLS.CLIENTS_URL+"/"+clientId);

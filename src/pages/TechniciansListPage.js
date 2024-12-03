@@ -1,10 +1,4 @@
-import {
-    CustomButton,
-    Sidebar,
-    Searchbar,
-    Table,
-    UserBar
-} from "../components"
+import {CustomButton, Searchbar, Sidebar, Table, UserBar} from "../components"
 import React, {useEffect, useState} from "react";
 import "../styles"
 import {listServiceOrders, listTechnicians} from "../services";
@@ -57,7 +51,7 @@ export const TechniciansListPage = () => {
             setTechnicians(data);
             setFilteredTechnicians(data);
         } catch (err) {
-            console.error("Failed to refresh table:", err);
+            setError("Failed to refresh table:", err);
         }
     };
 
@@ -68,7 +62,7 @@ export const TechniciansListPage = () => {
                 const orders = response.data.serviceOrders || [];
                 setServiceOrders(orders);
             } catch (error) {
-                console.error(error);
+                setError(error);
             }
         };
         fetchServiceOrders();
