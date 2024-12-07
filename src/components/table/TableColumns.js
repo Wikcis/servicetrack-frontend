@@ -1,6 +1,8 @@
-import React, { Fragment } from "react";
-import { CustomCheckbox } from "../checkbox/CustomCheckbox";
-import { IconButtonsContainer } from "../iconButton/IconButtonsContainer";
+import React, {Fragment, useEffect, useState} from "react";
+import {CustomCheckbox} from "../checkbox/CustomCheckbox";
+import {IconButtonsContainer} from "../iconButton/IconButtonsContainer";
+import {Titles} from "../../utils";
+import {listServiceOrders} from "../../services";
 
 const checkBoxColumn = {
     Header: "",
@@ -20,25 +22,7 @@ const emailColumn = {
     style: { width: "22%" },
 }
 
-const formatDateTime = (dateTime) => {
-    if (!dateTime) return "N/A";
-    try {
-        const date = new Date(dateTime);
-        return new Intl.DateTimeFormat("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true,
-        }).format(date);
-    } catch {
-        return "Invalid Date";
-    }
-};
-
-
-export const createTechniciansColumns = (countServiceOrders, type, refreshTable) => [
+const createTechniciansColumns = (countServiceOrders, type, refreshTable) => [
 
     checkBoxColumn,
     {
@@ -67,7 +51,7 @@ export const createTechniciansColumns = (countServiceOrders, type, refreshTable)
     },
 ];
 
-export const createClientColumns = (countServiceOrders, type, refreshTable) => [
+const createClientColumns = (countServiceOrders, selectServiceOrdersFormat, type, refreshTable) => [
     {
         Header: "",
         accessor: "checkBox",
@@ -85,7 +69,7 @@ export const createClientColumns = (countServiceOrders, type, refreshTable) => [
         Header: "Service Formats",
         accessor: "serviceFormats",
         style: { width: "15%" },
-        Cell: ({ row }) => <Fragment>{countServiceOrders(row)}</Fragment>,
+        Cell: ({ row }) => <Fragment>{selectServiceOrdersFormat(row)}</Fragment>,
     },
     {
         Header: "Number of Services",
@@ -101,7 +85,7 @@ export const createClientColumns = (countServiceOrders, type, refreshTable) => [
     },
 ];
 
-export const createServiceOrdersColumns = (countServiceOrders, type, refreshTable) => [
+const createServiceOrdersColumns = (countServiceOrders, type, refreshTable) => [
     {
         Header: "Client Name",
         accessor: "clientName",
@@ -142,3 +126,82 @@ export const createServiceOrdersColumns = (countServiceOrders, type, refreshTabl
         Cell: ({ row }) => <IconButtonsContainer type={type} row={row} refreshTable={refreshTable} />,
     },
 ];
+
+const formatDateTime = (dateTime) => {
+    if (!dateTime) return "N/A";
+    try {
+        const date = new Date(dateTime);
+        return new Intl.DateTimeFormat("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+        }).format(date);
+    } catch {
+        return "Invalid Date";
+    }
+};
+
+
+export const TableColumns = (type, refreshTable) => {
+
+    const [serviceOrders, setServiceOrders] = useState([]);
+
+    useEffect(() => {
+        const fetchServiceOrders = async () => {
+            try {
+                const response = await listServiceOrders();
+                const orders = response.data.serviceOrders || [];
+                setServiceOrders(orders);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchServiceOrders();
+    }, []);
+
+    const countServiceOrders = React.useCallback(
+        (row) => {
+            const id = row.original.id;
+            if (type === Titles.techniciansPageTitle) {
+                return serviceOrders.filter((order) => order.technicianId === id).length;
+            } else if (type === Titles.clientsPageTitle) {
+                return serviceOrders.filter((order) => order.clientId === id).length;
+            }
+            return 0;
+        },
+        [serviceOrders, type]
+    );
+
+    const selectServiceOrdersFormats = React.useCallback(
+        (row) => {
+            const id = row.original.id;
+            const uniqueFormats = Array.from(
+                new Set(
+                    serviceOrders
+                        .filter((order) => order.clientId === id)
+                        .map((order) => order.serviceFormat)
+                )
+            );
+            return uniqueFormats.join(", ");
+        },
+        [serviceOrders]
+    );
+
+    return React.useMemo(() => {
+        switch (type) {
+            case Titles.techniciansPageTitle:
+                return createTechniciansColumns(countServiceOrders, type, refreshTable);
+            case Titles.clientsPageTitle:
+                return createClientColumns(countServiceOrders, selectServiceOrdersFormats, type, refreshTable);
+            case Titles.serviceOrdersPageTitle:
+                return createServiceOrdersColumns(type, refreshTable);
+            default:
+                return [];
+        }
+    }, [countServiceOrders, selectServiceOrdersFormats, type, refreshTable]);
+}
+
+

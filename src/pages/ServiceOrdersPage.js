@@ -1,8 +1,9 @@
-import {CustomButton, Searchbar, Sidebar, Table, Title, UserBar} from "../components"
+import {CustomButton, DropDownList, Searchbar, Sidebar, Table, Title, UserBar} from "../components"
 import React, {useEffect, useState} from "react";
 import "../styles"
 import {getClient, listServiceOrders} from "../services";
-import {Titles} from "../utils";
+import {sortData, Titles} from "../utils";
+import {TableColumns} from "../components/table/TableColumns";
 
 export const ServiceOrdersPage = () => {
 
@@ -11,7 +12,9 @@ export const ServiceOrdersPage = () => {
     const [error, setError] = useState(null);
     const [filteredServiceOrders, setFilteredServiceOrders] = useState([]);
     const [searchInput, setSearchInput] = useState("");
-    
+
+    const columns = TableColumns(Titles.serviceOrdersPageTitle, () => refreshTable());
+
     const refreshTable = async () => {
         try {
             setLoading(true);
@@ -79,6 +82,10 @@ export const ServiceOrdersPage = () => {
         fetchServiceOrders();
     }, []);
 
+    const handleSelection = (columnName) => {
+        sortData(columnName, columns, filteredServiceOrders, setFilteredServiceOrders);
+    };
+
     if (loading) {
         return (
             <div className="sidebarContainer">
@@ -108,6 +115,10 @@ export const ServiceOrdersPage = () => {
                 <UserBar title={Titles.serviceOrdersPageTitle}/>
                 <div className="aboveTableContainer">
                     <Title>Your services</Title>
+                    <DropDownList
+                        columns={columns.map(col => col.Header)}
+                        onSelectColumn={handleSelection}
+                    />
                     <Searchbar onSearch={(input) => setSearchInput(input)}/>
                     <CustomButton className="addButton">
                         Add service order

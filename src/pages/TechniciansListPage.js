@@ -1,17 +1,19 @@
-import {CustomButton, Searchbar, Sidebar, Table, UserBar} from "../components"
+import {CustomButton, DropDownList, Searchbar, Sidebar, Table, UserBar} from "../components"
 import React, {useEffect, useState} from "react";
 import "../styles"
-import {listServiceOrders, listTechnicians} from "../services";
-import {Titles} from "../utils";
+import {listTechnicians} from "../services";
+import {sortData, Titles} from "../utils";
+import {TableColumns} from "../components/table/TableColumns";
 
 export const TechniciansListPage = () => {
 
-    const [serviceOrders, setServiceOrders] = useState([]);
     const [technicians, setTechnicians] = useState([]);
     const [filteredTechnicians, setFilteredTechnicians] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchInput, setSearchInput] = useState("");
+
+    const columns = TableColumns(Titles.techniciansPageTitle, () => refreshTable());
 
     useEffect(() => {
         const fetchTechnicians = async () => {
@@ -55,18 +57,9 @@ export const TechniciansListPage = () => {
         }
     };
 
-    useEffect(() => {
-        const fetchServiceOrders = async () => {
-            try {
-                const response = await listServiceOrders();
-                const orders = response.data.serviceOrders || [];
-                setServiceOrders(orders);
-            } catch (error) {
-                setError(error);
-            }
-        };
-        fetchServiceOrders();
-    }, []);
+    const handleSelection = (columnName) => {
+        sortData(columnName, columns, filteredTechnicians, setFilteredTechnicians);
+    };
 
     if (loading) {
         return (
@@ -96,6 +89,10 @@ export const TechniciansListPage = () => {
             <div className="mainContainer">
                 <UserBar title={Titles.techniciansPageTitle}/>
                 <div className="aboveTableContainer">
+                    <DropDownList
+                        columns={columns.map(col => col.Header)}
+                        onSelectColumn={handleSelection}
+                    />
                     <Searchbar onSearch={(input) => setSearchInput(input)}/>
                     <CustomButton className="addButton">
                         Add technician
@@ -103,7 +100,6 @@ export const TechniciansListPage = () => {
                 </div>
                 <Table
                     data={filteredTechnicians}
-                    serviceOrders={serviceOrders}
                     type={Titles.techniciansPageTitle}
                     refreshTable={refreshTable}
                 />

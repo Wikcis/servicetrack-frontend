@@ -1,17 +1,19 @@
-import {CustomButton, Searchbar, Sidebar, Table, UserBar} from "../components"
+import {CustomButton, DropDownList, Searchbar, Sidebar, Table, UserBar} from "../components"
 import React, {useEffect, useState} from "react";
 import "../styles"
-import {listClients, listServiceOrders} from "../services";
-import {Titles} from "../utils";
+import {listClients} from "../services";
+import {sortData,Titles} from "../utils";
+import {TableColumns} from "../components/table/TableColumns";
 
 export const ClientsListPage = () => {
 
-    const [serviceOrders, setServiceOrders] = useState([]);
     const [clients, setClients] = useState([]);
     const [filteredClients, setFilteredClients] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchInput, setSearchInput] = useState("");
+
+    const columns = TableColumns(Titles.clientsPageTitle, () => refreshTable());
 
     useEffect(() => {
         const fetchClients = async () => {
@@ -54,23 +56,14 @@ export const ClientsListPage = () => {
         }
     };
 
-    useEffect(() => {
-        const fetchServiceOrders = async () => {
-            try {
-                const response = await listServiceOrders();
-                const orders = response.data.serviceOrders || [];
-                setServiceOrders(orders);
-            } catch (error) {
-                setError(error);
-            }
-        };
-        fetchServiceOrders();
-    }, []);
+    const handleSelection = (columnName) => {
+        sortData(columnName, columns, filteredClients, setFilteredClients);
+    };
 
     if (loading) {
         return (
             <div className="sidebarContainer">
-                <Sidebar/>
+                <Sidebar />
                 <div className="container col py-3">
                     <h2 className="text-center">Loading...</h2>
                 </div>
@@ -81,7 +74,7 @@ export const ClientsListPage = () => {
     if (error) {
         return (
             <div className="sidebarContainer">
-                <Sidebar/>
+                <Sidebar />
                 <div className="container col py-3">
                     <h2 className="text-center text-danger">{error}</h2>
                 </div>
@@ -91,23 +84,25 @@ export const ClientsListPage = () => {
 
     return (
         <div className="app">
-            <Sidebar/>
+            <Sidebar />
             <div className="mainContainer">
-                <UserBar title={Titles.clientsPageTitle}/>
+                <UserBar title={Titles.clientsPageTitle} />
                 <div className="aboveTableContainer">
-                    <Searchbar onSearch={(input) => setSearchInput(input)}/>
+                    <DropDownList
+                        columns={columns.map(col => col.Header)}
+                        onSelectColumn={handleSelection}
+                    />
+                    <Searchbar onSearch={(input) => setSearchInput(input)} />
                     <CustomButton className="addButton">
                         Add client
                     </CustomButton>
                 </div>
                 <Table
                     data={filteredClients}
-                    serviceOrders={serviceOrders}
                     type={Titles.clientsPageTitle}
                     refreshTable={refreshTable}
                 />
             </div>
         </div>
-
     );
 };
