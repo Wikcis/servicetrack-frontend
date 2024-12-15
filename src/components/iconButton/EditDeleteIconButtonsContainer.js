@@ -2,7 +2,7 @@ import React from "react";
 import {IconEditButton} from "./IconEditButton";
 import {IconDeleteButton} from "./IconDeleteButton";
 
-export const IconButtonsContainer = ({ type, row, refreshTable }) => {
+export const EditDeleteIconButtonsContainer = ({ type, row, refreshTable }) => {
 
     return (
         <div className="iconButton">

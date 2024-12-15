@@ -1,6 +1,6 @@
 import React, {Fragment, useEffect, useState} from "react";
 import {CustomCheckbox} from "../checkbox/CustomCheckbox";
-import {IconButtonsContainer} from "../iconButton/IconButtonsContainer";
+import {EditDeleteIconButtonsContainer} from "../iconButton/EditDeleteIconButtonsContainer";
 import {Titles} from "../../utils";
 import {listServiceOrders} from "../../services";
 
@@ -47,7 +47,7 @@ const createTechniciansColumns = (countServiceOrders, type, refreshTable) => [
         Header: "",
         accessor: "edition",
         style: { width: "12%" },
-        Cell: ({ row }) => <IconButtonsContainer type={type} row={row} refreshTable={refreshTable} />,
+        Cell: ({ row }) => <EditDeleteIconButtonsContainer type={type} row={row} refreshTable={refreshTable} />,
     },
 ];
 
@@ -81,7 +81,7 @@ const createClientColumns = (countServiceOrders, selectServiceOrdersFormat, type
         Header: "",
         accessor: "edition",
         style: { width: "12%" },
-        Cell: ({ row }) => <IconButtonsContainer type={type} row={row} refreshTable={refreshTable} />,
+        Cell: ({ row }) => <EditDeleteIconButtonsContainer type={type} row={row} refreshTable={refreshTable} />,
     },
 ];
 
@@ -123,7 +123,7 @@ const createServiceOrdersColumns = (countServiceOrders, type, refreshTable) => [
         Header: "",
         accessor: "edition",
         style: { width: "8%" },
-        Cell: ({ row }) => <IconButtonsContainer type={type} row={row} refreshTable={refreshTable} />,
+        Cell: ({ row }) => <EditDeleteIconButtonsContainer type={type} row={row} refreshTable={refreshTable} />,
     },
 ];
 

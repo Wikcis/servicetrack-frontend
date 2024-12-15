@@ -4,14 +4,15 @@ import "../styles"
 import {listTechnicians} from "../services";
 import {sortData, Titles} from "../utils";
 import {TableColumns} from "../components/table/TableColumns";
+import {PlusIcon} from "../assets";
+import {TechnicianCreationPopup} from "../components/popup/TechnicianCreationPopup";
 
 export const TechniciansListPage = () => {
 
     const [technicians, setTechnicians] = useState([]);
     const [filteredTechnicians, setFilteredTechnicians] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [searchInput, setSearchInput] = useState("");
+    const [triggerButton, setTriggerButton] = useState(false);
 
     const columns = TableColumns(Titles.techniciansPageTitle, () => refreshTable());
 
@@ -22,11 +23,8 @@ export const TechniciansListPage = () => {
                 const data = response.data.technicians || [];
                 setTechnicians(data);
                 setFilteredTechnicians(data);
-                setLoading(false);
             } catch (error) {
                 console.error(error);
-                setError("Failed to fetch technicians. Please try again later.");
-                setLoading(false);
             }
         };
         fetchTechnicians();
@@ -53,35 +51,13 @@ export const TechniciansListPage = () => {
             setTechnicians(data);
             setFilteredTechnicians(data);
         } catch (err) {
-            setError("Failed to refresh table:", err);
+            console.log(err)
         }
     };
 
     const handleSelection = (columnName) => {
         sortData(columnName, columns, filteredTechnicians, setFilteredTechnicians);
     };
-
-    if (loading) {
-        return (
-            <div className="sidebarContainer">
-                <Sidebar/>
-                <div className="container col py-3">
-                    <h2 className="text-center">Loading...</h2>
-                </div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="sidebarContainer">
-                <Sidebar/>
-                <div className="container col py-3">
-                    <h2 className="text-center text-danger">{error}</h2>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className="app">
@@ -94,7 +70,11 @@ export const TechniciansListPage = () => {
                         onSelectColumn={handleSelection}
                     />
                     <Searchbar onSearch={(input) => setSearchInput(input)}/>
-                    <CustomButton className="addButton">
+                    <CustomButton
+                        className="addButton"
+                        icon={<PlusIcon/>}
+                        setTriggerButton={setTriggerButton}
+                    >
                         Add technician
                     </CustomButton>
                 </div>
@@ -104,6 +84,10 @@ export const TechniciansListPage = () => {
                     refreshTable={refreshTable}
                 />
             </div>
+            <TechnicianCreationPopup
+                triggerButton={triggerButton}
+                setTriggerButton={setTriggerButton}
+            />
         </div>
 
     );

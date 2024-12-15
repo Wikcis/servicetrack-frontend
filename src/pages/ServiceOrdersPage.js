@@ -1,32 +1,37 @@
-import {CustomButton, DropDownList, Searchbar, Sidebar, Table, Title, UserBar} from "../components"
+import {
+    CustomButton,
+    DropDownList,
+    Searchbar,
+    ServiceOrderCreationPopup,
+    Sidebar,
+    Table,
+    Title,
+    UserBar
+} from "../components"
 import React, {useEffect, useState} from "react";
 import "../styles"
 import {getClient, listServiceOrders} from "../services";
 import {sortData, Titles} from "../utils";
 import {TableColumns} from "../components/table/TableColumns";
+import {PlusIcon} from "../assets";
 
 export const ServiceOrdersPage = () => {
 
     const [serviceOrders, setServiceOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [filteredServiceOrders, setFilteredServiceOrders] = useState([]);
     const [searchInput, setSearchInput] = useState("");
+    const [triggerButton, setTriggerButton] = useState(false);
 
     const columns = TableColumns(Titles.serviceOrdersPageTitle, () => refreshTable());
 
     const refreshTable = async () => {
         try {
-            setLoading(true);
             const response = await listServiceOrders();
             const orders = response.data.serviceOrders || [];
             const ordersWithClientNames = await fetchClientNames(orders);
             setServiceOrders(ordersWithClientNames);
-            setLoading(false); // Loading complete
         } catch (err) {
             console.error("Error refreshing table:", err);
-            setError("Failed to refresh table.");
-            setLoading(false);
         }
     };
 
@@ -73,10 +78,8 @@ export const ServiceOrdersPage = () => {
                 const orders = response.data.serviceOrders || [];
                 const ordersWithClientNames = await fetchClientNames(orders)
                 setServiceOrders(ordersWithClientNames);
-                setLoading(false);
             } catch (error) {
                 console.error(error);
-                setLoading(false);
             }
         };
         fetchServiceOrders();
@@ -85,28 +88,6 @@ export const ServiceOrdersPage = () => {
     const handleSelection = (columnName) => {
         sortData(columnName, columns, filteredServiceOrders, setFilteredServiceOrders);
     };
-
-    if (loading) {
-        return (
-            <div className="sidebarContainer">
-                <Sidebar/>
-                <div className="container col py-3">
-                    <h2 className="text-center">Loading...</h2>
-                </div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="sidebarContainer">
-                <Sidebar/>
-                <div className="container col py-3">
-                    <h2 className="text-center text-danger">{error}</h2>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className="app">
@@ -120,7 +101,11 @@ export const ServiceOrdersPage = () => {
                         onSelectColumn={handleSelection}
                     />
                     <Searchbar onSearch={(input) => setSearchInput(input)}/>
-                    <CustomButton className="addButton">
+                    <CustomButton
+                        className="addButton"
+                        icon={<PlusIcon/>}
+                        setTriggerButton={setTriggerButton}
+                    >
                         Add service order
                     </CustomButton>
                 </div>
@@ -130,6 +115,11 @@ export const ServiceOrdersPage = () => {
                     refreshTable={refreshTable}
                 />
             </div>
+
+            <ServiceOrderCreationPopup
+                triggerButton={triggerButton}
+                setTriggerButton={setTriggerButton}
+            />
         </div>
 
     );

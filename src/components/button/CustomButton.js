@@ -1,20 +1,24 @@
 import React from "react";
-import {Button, ThemeProvider} from "@mui/material";
-import {PlusIcon} from "../../assets";
-import {Theme} from "../../utils";
+import { Button, ThemeProvider } from "@mui/material";
+import { Theme } from "../../utils";
 
-export const CustomButton = ( { children, className } ) => {
+export const CustomButton = ({ children, className, setTriggerButton, icon }) => {
+
+    const handleClick = () => {
+        setTriggerButton((prev) => !prev);
+    };
 
     return (
         <ThemeProvider theme={Theme}>
-            <Button className={className}
-                    variant="contained"
-                    startIcon={<PlusIcon />}
-                    color="primary"
+            <Button
+                className={className}
+                variant="contained"
+                startIcon={icon}
+                color="primary"
+                onClick={handleClick}
             >
                 {children}
             </Button>
         </ThemeProvider>
-
-    )
-}
+    );
+};

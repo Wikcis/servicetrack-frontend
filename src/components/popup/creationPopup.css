@@ -1,0 +1,79 @@
+.popUpContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--background);
+    width: 55%;
+    padding: 2%;
+    border-radius: 16px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.popupHeader {
+    margin-bottom: 3%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.popupTitle {
+    font-family: var(--main-font), sans-serif;
+    color: var(--primary);
+    font-weight: bolder;
+    font-size: 1.7rem;
+}
+
+.gridContainer {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.gridItem {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.gridItemFull {
+    grid-column: span 2;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.labelField {
+    font-family: var(--main-font), sans-serif;
+    color: var(--text);
+    margin-right: 10%;
+    flex: 1;
+    white-space: nowrap;
+}
+
+.textField {
+    flex: 1;
+    width: 1%;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 5%;
+}
+
+.popupOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}

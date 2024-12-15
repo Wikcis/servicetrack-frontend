@@ -39,7 +39,7 @@ th {
 }
 
 tbody td{
-    background-color: var(--table-background);
+    background-color: var(--background);
 }
 
 tbody tr {

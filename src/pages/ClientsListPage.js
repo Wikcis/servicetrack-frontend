@@ -1,17 +1,18 @@
-import {CustomButton, DropDownList, Searchbar, Sidebar, Table, UserBar} from "../components"
+import {ClientCreationPopup, CustomButton, DropDownList, Searchbar, Sidebar, Table, UserBar} from "../components"
 import React, {useEffect, useState} from "react";
 import "../styles"
 import {listClients} from "../services";
-import {sortData,Titles} from "../utils";
+import {sortData, Titles} from "../utils";
+import "../components"
 import {TableColumns} from "../components/table/TableColumns";
+import {PlusIcon} from "../assets";
 
 export const ClientsListPage = () => {
 
     const [clients, setClients] = useState([]);
     const [filteredClients, setFilteredClients] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [searchInput, setSearchInput] = useState("");
+    const [triggerButton, setTriggerButton] = useState(false);
 
     const columns = TableColumns(Titles.clientsPageTitle, () => refreshTable());
 
@@ -21,12 +22,8 @@ export const ClientsListPage = () => {
                 const response = await listClients();
                 const data = response.data.clients || [];
                 setClients(data);
-                setFilteredClients(data);
-                setLoading(false);
             } catch (error) {
                 console.error(error);
-                setError("Failed to fetch clients. Please try again later.");
-                setLoading(false);
             }
         };
         fetchClients();
@@ -52,7 +49,7 @@ export const ClientsListPage = () => {
             setClients(data);
             setFilteredClients(data);
         } catch (err) {
-            setError("Failed to refresh table:", err);
+            console.log(err)
         }
     };
 
@@ -60,40 +57,22 @@ export const ClientsListPage = () => {
         sortData(columnName, columns, filteredClients, setFilteredClients);
     };
 
-    if (loading) {
-        return (
-            <div className="sidebarContainer">
-                <Sidebar />
-                <div className="container col py-3">
-                    <h2 className="text-center">Loading...</h2>
-                </div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="sidebarContainer">
-                <Sidebar />
-                <div className="container col py-3">
-                    <h2 className="text-center text-danger">{error}</h2>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="app">
-            <Sidebar />
+            <Sidebar/>
             <div className="mainContainer">
-                <UserBar title={Titles.clientsPageTitle} />
+                <UserBar title={Titles.clientsPageTitle}/>
                 <div className="aboveTableContainer">
                     <DropDownList
                         columns={columns.map(col => col.Header)}
                         onSelectColumn={handleSelection}
                     />
-                    <Searchbar onSearch={(input) => setSearchInput(input)} />
-                    <CustomButton className="addButton">
+                    <Searchbar onSearch={(input) => setSearchInput(input)}/>
+                    <CustomButton
+                        className="addButton"
+                        icon={<PlusIcon/>}
+                        setTriggerButton={setTriggerButton}
+                    >
                         Add client
                     </CustomButton>
                 </div>
@@ -103,6 +82,10 @@ export const ClientsListPage = () => {
                     refreshTable={refreshTable}
                 />
             </div>
+            <ClientCreationPopup
+                triggerButton={triggerButton}
+                setTriggerButton={setTriggerButton}
+            />
         </div>
     );
 };

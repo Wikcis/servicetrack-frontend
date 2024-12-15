@@ -1,0 +1,8 @@
+.customTextField {
+    background-color: var(--primary);
+    width: 30%;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+
