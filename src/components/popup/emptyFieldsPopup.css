@@ -1,9 +1,10 @@
-.popUpContainer {
+.emptyFieldsPopupContainer {
     flex: 1;
     display: flex;
     flex-direction: column;
     background-color: var(--background);
-    width: 65%;
+    width: 27%;
+    height: 18%;
     padding: 2%;
     border-radius: 16px;
     position: fixed;
@@ -20,65 +21,26 @@
     justify-content: space-between;
 }
 
-.popupTitle {
+.emptyFieldsPopupTitle {
     font-family: var(--main-font), sans-serif;
-    color: var(--primary);
+    color: var(--warning);
     font-weight: bolder;
     font-size: 1.7rem;
 }
 
-.gridContainer {
-    flex: 1;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-}
-
-.gridItem {
-    flex: 1;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-right: 5%;
-}
-
-.gridItemFull {
-    grid-column: span 2;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-}
-
-.labelField {
+.emptyFieldsLabelField {
     font-family: var(--main-font), sans-serif;
-    color: var(--text);
+    color: var(--text-darker);
     flex: 1;
     margin-right: 7%;
     white-space: nowrap;
-}
-
-.textField {
-    width: 30%;
-    max-width: 300px;
-    margin: 0 auto;
-}
-
-.buttonContainer {
-    flex: 1;
-    height: 100%;
+    text-align: left;
     display: flex;
-    justify-content: center;
-    margin-top: 5%;
+    align-items: center;
 }
 
-.saveButton {
-    width: 50%;
-    max-height: 50px;
-    min-height: 20px;
-    height: 45px;
-}
 
-.popupOverlay {
+.emptyFieldsPopupOverlay {
     position: fixed;
     top: 0;
     left: 0;

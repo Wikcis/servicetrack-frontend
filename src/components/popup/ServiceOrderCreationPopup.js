@@ -5,6 +5,7 @@ import React, {useEffect} from "react";
 import {IconXButton} from "../iconButton/IconXButton";
 import {DropDownList} from "../dropDownList/DropDownList";
 import {Titles} from "../../utils";
+import {EmptyFieldsPopup} from "./EmptyFieldsPopup";
 
 export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton, refreshTable}) => {
 
@@ -14,6 +15,7 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton, refr
     const [type, setType] = React.useState("");
     const [format, setFormat] = React.useState("");
     const [description, setDescription] = React.useState("");
+    const [emptyWarningTrigger, setEmptyWarningTrigger] = React.useState(false);
 
     const clearValues = () => {
         setName("");
@@ -25,14 +27,21 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton, refr
     };
 
     const createRequestBody = () => {
-        return (name === "" || description === "" || date === "") ? null : ({
+
+        if(name === "" || description === "" || date === ""){
+
+            setEmptyWarningTrigger(true);
+            return null;
+        }
+
+        return {
             id: window.crypto.randomUUID(),
             serviceType: type,
             serviceFormat: format,
             serviceDescription: description,
             dateTimeOfService: date,
             status: status,
-        })
+        }
     }
 
     useEffect(() => {
@@ -130,6 +139,11 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton, refr
 
                     </div>
                 </div>
+
+                <EmptyFieldsPopup
+                    triggerButton={emptyWarningTrigger}
+                    setTriggerButton={setEmptyWarningTrigger}
+                />
             </Popup>
         </div>
     );

@@ -4,6 +4,7 @@ import {CustomButton} from "../button/CustomButton";
 import React, {useEffect} from "react";
 import {IconXButton} from "../iconButton/IconXButton";
 import {Titles} from "../../utils";
+import {EmptyFieldsPopup} from "./EmptyFieldsPopup";
 
 export const TechnicianCreationPopup = ({triggerButton, setTriggerButton, refreshTable}) => {
 
@@ -11,6 +12,7 @@ export const TechnicianCreationPopup = ({triggerButton, setTriggerButton, refres
     const [lastName, setLastName] = React.useState("");
     const [email, setEmail] = React.useState("");
     const [phoneNumber, setPhoneNumber] = React.useState("");
+    const [emptyWarningTrigger, setEmptyWarningTrigger] = React.useState(false);
 
     const clearValues = () => {
         setFirstName("");
@@ -20,14 +22,19 @@ export const TechnicianCreationPopup = ({triggerButton, setTriggerButton, refres
     };
 
     const createRequestBody = () => {
-        console.log("firstName:" + firstName + "\n lastName:" + lastName + "\n email:" + email + "\n phoneNumber:" + phoneNumber);
-        return (firstName === "" || lastName === "" || email === "" || phoneNumber === "") ? null : ({
+
+        if (firstName === "" || lastName === "" || email === "" || phoneNumber === "") {
+            setEmptyWarningTrigger(true);
+            return null;
+        }
+
+        return {
             id: window.crypto.randomUUID(),
             firstName: firstName,
             lastName: lastName,
             email: email,
             phoneNumber: phoneNumber,
-        })
+        };
     }
 
     useEffect(() => {
@@ -109,6 +116,11 @@ export const TechnicianCreationPopup = ({triggerButton, setTriggerButton, refres
 
                     </div>
                 </div>
+
+                <EmptyFieldsPopup
+                    triggerButton={emptyWarningTrigger}
+                    setTriggerButton={setEmptyWarningTrigger}
+                />
             </Popup>
         </div>
     );

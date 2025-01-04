@@ -6,21 +6,28 @@ import {addClient, addServiceOrder, addTechnician} from "../../services";
 export const CustomButton = ({ children, className, setTriggerButton, icon, requestBody, type }) => {
 
     const handleClick = async () => {
+
         if (requestBody) {
             const requestData = requestBody();
-            console.log(requestData);
+
+            if(!requestData) {
+                return null
+            }
+
             switch (type) {
                 case Titles.techniciansPageTitle:
-                    return addTechnician(requestData);
+                    addTechnician(requestData);
+                    break;
                 case Titles.clientsPageTitle:
-                    return addClient(requestData);
+                    addClient(requestData);
+                    break;
                 case Titles.serviceOrdersPageTitle:
-                    return addServiceOrder(requestData);
+                    addServiceOrder(requestData);
+                    break;
                 default:
-                    return null;
+                    break;
             }
         }
-
         setTriggerButton((prev) => !prev);
     };
 

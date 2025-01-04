@@ -2,7 +2,7 @@ import Popup from "reactjs-popup";
 import {IconXButton} from "../iconButton/IconXButton";
 import React from "react";
 
-export const EmptyFieldsPopup = ({triggerButton, setTriggerButton, refreshTable}) => {
+export const EmptyFieldsPopup = ({triggerButton, setTriggerButton}) => {
 
     return (
         <div>
@@ -11,15 +11,18 @@ export const EmptyFieldsPopup = ({triggerButton, setTriggerButton, refreshTable}
                 modal
                 nested
                 closeOnDocumentClick={false}
-                onClose={refreshTable}
             >
-                <div className="popupOverlay">
-                    <div className="popUpContainer">
-
+                <div className="emptyFieldsPopupOverlay">
+                    <div className="emptyFieldsPopupContainer">
                         <div className="popupHeader">
-                            <h3 className="popupTitle">Add New Client</h3>
+                            <h3 className="emptyFieldsPopupTitle">Empty values</h3>
                             <IconXButton className="closeButton" setTriggerButton={setTriggerButton}/>
                         </div>
+
+                        <span className="emptyFieldsLabelField">
+                            Some fields are empty. <br/>
+                            Fill them to add an object.
+                        </span>
 
                     </div>
                 </div>

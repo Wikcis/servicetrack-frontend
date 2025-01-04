@@ -4,12 +4,14 @@ import {CustomButton} from "../button/CustomButton";
 import {IconXButton} from "../iconButton/IconXButton";
 import React, {useEffect} from "react";
 import {Titles} from "../../utils";
+import {EmptyFieldsPopup} from "./EmptyFieldsPopup";
 
 export const ClientCreationPopup = ({triggerButton, setTriggerButton, refreshTable}) => {
 
     const [name, setName] = React.useState("");
     const [email, setEmail] = React.useState("");
     const [phoneNumber, setPhoneNumber] = React.useState("");
+    const [emptyWarningTrigger, setEmptyWarningTrigger] = React.useState(false);
 
     const clearValues = () => {
         setName("");
@@ -18,12 +20,18 @@ export const ClientCreationPopup = ({triggerButton, setTriggerButton, refreshTab
     };
 
     const createRequestBody = () => {
-        return (name === "" || email === "" || phoneNumber === "") ? null : ({
+
+        if(name === "" || email === "" || phoneNumber === "") {
+            setEmptyWarningTrigger(true);
+            return null;
+        }
+
+        return {
             id: window.crypto.randomUUID(),
             name: name,
             email: email,
             phoneNumber: phoneNumber
-        })
+        };
     };
 
     useEffect(() => {
@@ -97,6 +105,11 @@ export const ClientCreationPopup = ({triggerButton, setTriggerButton, refreshTab
 
                     </div>
                 </div>
+
+                <EmptyFieldsPopup
+                    triggerButton={emptyWarningTrigger}
+                    setTriggerButton={setEmptyWarningTrigger}
+                />
             </Popup>
         </div>
     );
