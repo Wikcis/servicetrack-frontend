@@ -6,3 +6,14 @@ export const listTechnicians = () =>
 
 export const deleteTechnician = (technicianId) =>
     axios.delete(REST_API_URLS.TECHNICIANS_URL+"/"+technicianId);
+
+export const addTechnician = (requestBody) => {
+
+    axios.post(REST_API_URLS.TECHNICIANS_URL, requestBody)
+        .then(response => {
+            return response.data
+        })
+        .catch(error => {
+            console.log(error);
+        })
+}

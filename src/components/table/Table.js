@@ -3,7 +3,6 @@ import {useTable} from "react-table";
 import {TableColumns} from "./TableColumns";
 
 export const Table = ({data, type, refreshTable}) => {
-
     const columns = TableColumns(type, refreshTable);
 
     const {getTableProps, getTableBodyProps, headerGroups, rows, prepareRow} = useTable({columns, data});

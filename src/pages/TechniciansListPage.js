@@ -87,6 +87,7 @@ export const TechniciansListPage = () => {
             <TechnicianCreationPopup
                 triggerButton={triggerButton}
                 setTriggerButton={setTriggerButton}
+                refreshTable={() => refreshTable()}
             />
         </div>
 

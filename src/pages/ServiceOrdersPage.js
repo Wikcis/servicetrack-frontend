@@ -5,7 +5,6 @@ import {
     ServiceOrderCreationPopup,
     Sidebar,
     Table,
-    Title,
     UserBar
 } from "../components"
 import React, {useEffect, useState} from "react";
@@ -95,7 +94,6 @@ export const ServiceOrdersPage = () => {
             <div className="mainContainer">
                 <UserBar title={Titles.serviceOrdersPageTitle}/>
                 <div className="aboveTableContainer">
-                    <Title>Your services</Title>
                     <DropDownList
                         columns={columns.map(col => col.Header)}
                         onSelectColumn={handleSelection}
@@ -119,6 +117,7 @@ export const ServiceOrdersPage = () => {
             <ServiceOrderCreationPopup
                 triggerButton={triggerButton}
                 setTriggerButton={setTriggerButton}
+                refreshTable={() => refreshTable()}
             />
         </div>
 

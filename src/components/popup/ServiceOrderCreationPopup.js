@@ -1,11 +1,12 @@
 import Popup from "reactjs-popup";
 import {CustomTextField} from "../textField/CustomTextField";
 import {CustomButton} from "../button/CustomButton";
-import React from "react";
+import React, {useEffect} from "react";
 import {IconXButton} from "../iconButton/IconXButton";
 import {DropDownList} from "../dropDownList/DropDownList";
+import {Titles} from "../../utils";
 
-export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => {
+export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton, refreshTable}) => {
 
     const [name, setName] = React.useState("");
     const [status, setStatus] = React.useState("");
@@ -14,6 +15,32 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => 
     const [format, setFormat] = React.useState("");
     const [description, setDescription] = React.useState("");
 
+    const clearValues = () => {
+        setName("");
+        setStatus("");
+        setDate("");
+        setType("");
+        setFormat("");
+        setDescription("");
+    };
+
+    const createRequestBody = () => {
+        return (name === "" || description === "" || date === "") ? null : ({
+            id: window.crypto.randomUUID(),
+            serviceType: type,
+            serviceFormat: format,
+            serviceDescription: description,
+            dateTimeOfService: date,
+            status: status,
+        })
+    }
+
+    useEffect(() => {
+        if (triggerButton) {
+            clearValues();
+        }
+    }, [triggerButton]);
+
     return (
         <div>
             <Popup
@@ -21,6 +48,11 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => 
                 modal
                 nested
                 closeOnDocumentClick={false}
+                onClose={() => {
+                    clearValues();
+                    refreshTable();
+                }}
+
             >
                 <div className="popupOverlay">
                     <div className="popUpContainer">
@@ -86,7 +118,14 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => 
                         </div>
 
                         <div className="buttonContainer">
-                            <CustomButton setTriggerButton={setTriggerButton}>Save</CustomButton>
+                            <CustomButton
+                                className="saveButton"
+                                setTriggerButton={setTriggerButton}
+                                requestBody={createRequestBody}
+                                type={Titles.serviceOrdersPageTitle}
+                            >
+                                Save
+                            </CustomButton>
                         </div>
 
                     </div>

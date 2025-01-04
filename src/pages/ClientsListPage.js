@@ -85,6 +85,7 @@ export const ClientsListPage = () => {
             <ClientCreationPopup
                 triggerButton={triggerButton}
                 setTriggerButton={setTriggerButton}
+                refreshTable={() => refreshTable()}
             />
         </div>
     );

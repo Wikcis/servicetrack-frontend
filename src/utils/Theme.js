@@ -1,9 +1,9 @@
-import { createTheme } from "@mui/material";
-import { colors } from "../styles";
+import {createTheme} from "@mui/material";
+import {colors} from "../styles";
 
 const createColor = (mainColor) => {
-    const { palette } = createTheme();
-    return palette.augmentColor({ color: { main: mainColor } });
+    const {palette} = createTheme();
+    return palette.augmentColor({color: {main: mainColor}});
 };
 
 export const Theme = createTheme({
@@ -11,4 +11,11 @@ export const Theme = createTheme({
         primary: createColor(colors.primary),
         iconButton: createColor(colors.icons),
     },
+
+    typography: {
+        button: {
+            fontSize: 16,
+            fontWeight: 500,
+        }
+    }
 });

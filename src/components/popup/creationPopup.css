@@ -3,7 +3,7 @@
     display: flex;
     flex-direction: column;
     background-color: var(--background);
-    width: 55%;
+    width: 65%;
     padding: 2%;
     border-radius: 16px;
     position: fixed;
@@ -32,6 +32,7 @@
     flex: 1;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
 }
 
 .gridItem {
@@ -39,6 +40,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    margin-right: 5%;
 }
 
 .gridItemFull {
@@ -51,21 +53,30 @@
 .labelField {
     font-family: var(--main-font), sans-serif;
     color: var(--text);
-    margin-right: 10%;
     flex: 1;
+    margin-right: 7%;
     white-space: nowrap;
 }
 
 .textField {
-    flex: 1;
-    width: 1%;
+    width: 30%;
+    max-width: 300px;
+    margin: 0 auto;
 }
 
 .buttonContainer {
+    flex: 1;
+    height: 100%;
     display: flex;
     justify-content: center;
-    flex-direction: column;
     margin-top: 5%;
+}
+
+.saveButton {
+    width: 50%;
+    max-height: 50px;
+    min-height: 20px;
+    height: 45px;
 }
 
 .popupOverlay {
