@@ -1,3 +1,2 @@
-export * from "./Theme";
-export * from "./Titles";
-export * from "./SortData";
+export * from "./Values";
+export * from "./Functions";

@@ -3,7 +3,9 @@
     display: flex;
     flex-direction: column;
     background-color: var(--background);
-    width: 65%;
+    width: 80%;
+    max-width: 1000px;
+    min-width: 100px;
     padding: 2%;
     border-radius: 16px;
     position: fixed;
@@ -28,10 +30,9 @@
 }
 
 .gridContainer {
-    flex: 1;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 25px;
+    display: flex;
+    flex-direction: column;
 }
 
 .gridItem {
@@ -39,36 +40,28 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin-right: 5%;
-}
-
-.gridItemFull {
-    grid-column: span 2;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
 }
 
 .labelField {
     font-family: var(--main-font), sans-serif;
     color: var(--text);
-    flex: 1;
-    margin-right: 7%;
-    white-space: nowrap;
+    width: 150px;
+    min-width: 100px;
+    max-width: 300px;
+    margin-right: 20px;
 }
 
 .textField {
-    width: 30%;
-    max-width: 300px;
-    margin: 0 auto;
+    width: 60%;
+    max-width: 250px;
+    min-width: 100px;
+    position: relative;
 }
 
 .buttonContainer {
-    flex: 1;
-    height: 100%;
     display: flex;
     justify-content: center;
-    margin-top: 5%;
+    margin-top: 7%;
 }
 
 .saveButton {
@@ -85,4 +78,18 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
+}
+
+.rowContainer {
+    display: flex;
+    flex-direction: row;
+}
+
+.description {
+    width: 76.5%;
+}
+
+.singleItemRowContainer {
+    flex: 1;
+    width: 75%;
 }

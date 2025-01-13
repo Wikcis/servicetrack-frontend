@@ -1,9 +1,9 @@
-import {ClientCreationPopup, CustomButton, DropDownList, Searchbar, Sidebar, Table, UserBar} from "../components"
+import {ClientCreationPopup, CustomButton, DropDownList, Searchbar, Sidebar, Table, UserBar} from "../components";
 import React, {useEffect, useState} from "react";
-import "../styles"
-import {listClients} from "../services";
-import {sortData, Titles} from "../utils";
-import "../components"
+import "../styles";
+import {listClients, listServiceOrders} from "../services";
+import {Format, mapAccessorToHeader, sortData, Titles} from "../utils";
+import "../components";
 import {TableColumns} from "../components/table/TableColumns";
 import {PlusIcon} from "../assets";
 
@@ -18,13 +18,7 @@ export const ClientsListPage = () => {
 
     useEffect(() => {
         const fetchClients = async () => {
-            try {
-                const response = await listClients();
-                const data = response.data.clients || [];
-                setClients(data);
-            } catch (error) {
-                console.error(error);
-            }
+            await refreshTable();
         };
         fetchClients();
     }, []);
@@ -36,7 +30,8 @@ export const ClientsListPage = () => {
                 return (
                     client.name.toLowerCase().includes(search) ||
                     client.phoneNumber.toString().includes(search) ||
-                    client.email.toLowerCase().includes(search)
+                    client.email.toLowerCase().includes(search) ||
+                    client.serviceFormats.toLowerCase().includes(search)
                 );
             })
         );
@@ -44,12 +39,33 @@ export const ClientsListPage = () => {
 
     const refreshTable = async () => {
         try {
-            const response = await listClients();
-            const data = response.data.clients || [];
-            setClients(data);
-            setFilteredClients(data);
+            const serviceOrdersResponse = await listServiceOrders();
+            const serviceOrdersData = serviceOrdersResponse.data.serviceOrders || [];
+
+            const clientsResponse = await listClients();
+            const clientsData = clientsResponse.data.clients || [];
+            const clientsWithAdditionalData = clientsData.map(client => {
+                const clientOrders = serviceOrdersData.filter(order => order.clientId === client.id);
+
+                const distinctServiceFormats = Array.from(
+                    new Set(
+                        clientOrders.map(order =>
+                            mapAccessorToHeader(order.serviceFormat, Format)
+                        )
+                    )
+                ).join(", ");
+
+                return {
+                    ...client,
+                    numberOfServices: clientOrders.length,
+                    serviceFormats: distinctServiceFormats || "",
+                };
+            });
+
+            setClients(clientsWithAdditionalData);
+            setFilteredClients(clientsWithAdditionalData);
         } catch (err) {
-            console.log(err)
+            console.log("Error refreshing table:", err);
         }
     };
 
@@ -64,8 +80,10 @@ export const ClientsListPage = () => {
                 <UserBar title={Titles.clientsPageTitle}/>
                 <div className="aboveTableContainer">
                     <DropDownList
-                        columns={columns.map(col => col.Header)}
+                        columns={columns.filter(col => col.Header !== "")}
                         onSelectColumn={handleSelection}
+                        title={Titles.sortByTitle}
+                        className={"dropDownListContainer"}
                     />
                     <Searchbar onSearch={(input) => setSearchInput(input)}/>
                     <CustomButton

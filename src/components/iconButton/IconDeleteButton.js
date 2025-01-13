@@ -12,7 +12,7 @@ export const IconDeleteButton = ({ type, row, refreshTable }) => {
                 await deleteTechnician(row.original.id);
             } else if (type === Titles.clientsPageTitle) {
                 await deleteClient(row.original.id);
-            } else if (type === Titles.serviceOrdersTitle) {
+            } else if (type === Titles.serviceOrdersPageTitle) {
                 await deleteServiceOrder(row.original.id);
             }
             console.log("Item deleted successfully");

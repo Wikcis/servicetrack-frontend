@@ -1,11 +1,10 @@
-import {CustomButton, DropDownList, Searchbar, Sidebar, Table, UserBar} from "../components"
+import {CustomButton, DropDownList, Searchbar, Sidebar, Table, TechnicianCreationPopup, UserBar} from "../components"
 import React, {useEffect, useState} from "react";
 import "../styles"
-import {listTechnicians} from "../services";
+import {listServiceOrders, listTechnicians} from "../services";
 import {sortData, Titles} from "../utils";
 import {TableColumns} from "../components/table/TableColumns";
 import {PlusIcon} from "../assets";
-import {TechnicianCreationPopup} from "../components/popup/TechnicianCreationPopup";
 
 export const TechniciansListPage = () => {
 
@@ -18,40 +17,37 @@ export const TechniciansListPage = () => {
 
     useEffect(() => {
         const fetchTechnicians = async () => {
-            try {
-                const response = await listTechnicians();
-                const data = response.data.technicians || [];
-                setTechnicians(data);
-                setFilteredTechnicians(data);
-            } catch (error) {
-                console.error(error);
-            }
+            refreshTable();
         };
         fetchTechnicians();
     }, []);
 
     useEffect(() => {
         const search = searchInput === "" ? searchInput : searchInput.toLowerCase();
-        setFilteredTechnicians(
-            technicians.filter((technician) => {
-                return (
-                    technician.firstName.toLowerCase().includes(search) ||
-                    technician.lastName.toLowerCase().includes(search) ||
-                    technician.phoneNumber.toString().includes(search) ||
-                    technician.email.toLowerCase().includes(search)
-                );
-            })
-        );
+        setFilteredTechnicians(technicians.filter((technician) => {
+            return (technician.firstName.toLowerCase().includes(search) || technician.lastName.toLowerCase().includes(search) || technician.phoneNumber.toString().includes(search) || technician.email.toLowerCase().includes(search));
+        }));
     }, [searchInput, technicians]);
 
     const refreshTable = async () => {
         try {
-            const response = await listTechnicians();
-            const data = response.data.technicians || [];
-            setTechnicians(data);
-            setFilteredTechnicians(data);
+            const serviceOrdersResponse = await listServiceOrders();
+            const serviceOrdersData = serviceOrdersResponse.data.serviceOrders || [];
+
+            const techniciansResponse = await listTechnicians();
+            const techniciansData = techniciansResponse.data.technicians || [];
+            const techniciansWithAdditionalData = techniciansData.map(technician => {
+                const technicianOrders = serviceOrdersData.filter(order => order.technicianId === technician.id);
+
+                return {
+                    ...technician, numberOfServices: technicianOrders.length,
+                };
+            });
+
+            setTechnicians(techniciansWithAdditionalData);
+            setFilteredTechnicians(techniciansWithAdditionalData);
         } catch (err) {
-            console.log(err)
+            console.log("Error refreshing table:", err);
         }
     };
 
@@ -59,15 +55,16 @@ export const TechniciansListPage = () => {
         sortData(columnName, columns, filteredTechnicians, setFilteredTechnicians);
     };
 
-    return (
-        <div className="app">
+    return (<div className="app">
             <Sidebar/>
             <div className="mainContainer">
                 <UserBar title={Titles.techniciansPageTitle}/>
                 <div className="aboveTableContainer">
                     <DropDownList
-                        columns={columns.map(col => col.Header)}
+                        columns={columns.filter(col => col.Header !== "")}
                         onSelectColumn={handleSelection}
+                        title={Titles.sortByTitle}
+                        className={"dropDownListContainer"}
                     />
                     <Searchbar onSearch={(input) => setSearchInput(input)}/>
                     <CustomButton

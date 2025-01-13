@@ -63,32 +63,36 @@ export const ClientCreationPopup = ({triggerButton, setTriggerButton, refreshTab
                         <div className="gridContainer">
 
                             <div className="gridItem">
-                                <span className="labelField">Name</span>
-                                <CustomTextField
-                                    className="textField"
-                                    label={"Enter client name"}
-                                    setText={setName}
-                                />
+                                <span className="labelField">Enter client name</span>
+                                <span className="textField">
+                                    <CustomTextField
+                                        label={"Name"}
+                                        setText={setName}
+                                    />
+                                </span>
                             </div>
 
                             <div></div>
 
                             <div className="gridItem">
-                                <span className="labelField">Email</span>
-                                <CustomTextField
-                                    className="textField"
-                                    label={"Enter Email"}
-                                    setText={setEmail}
-                                />
+                                <span className="labelField">Enter Email</span>
+                                <span className="textField">
+                                    <CustomTextField
+                                        label={"Email"}
+                                        setText={setEmail}
+                                    />
+                                </span>
                             </div>
 
                             <div className="gridItem">
-                                <span className="labelField">Phone number</span>
-                                <CustomTextField
-                                    className="textField"
-                                    label={"Enter phone number"}
-                                    setText={setPhoneNumber}
-                                />
+                                <span className="labelField">Enter phone number</span>
+                                <span className="textField">
+                                    <CustomTextField
+                                        label={"Phone number"}
+                                        setText={setPhoneNumber}
+                                    />
+                                </span>
+
                             </div>
                         </div>
 

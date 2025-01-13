@@ -10,7 +10,7 @@ import {
 import React, {useEffect, useState} from "react";
 import "../styles"
 import {getClient, listServiceOrders} from "../services";
-import {sortData, Titles} from "../utils";
+import {Format, mapAccessorToHeader, sortData, Status, Titles, Type} from "../utils";
 import {TableColumns} from "../components/table/TableColumns";
 import {PlusIcon} from "../assets";
 
@@ -23,12 +23,29 @@ export const ServiceOrdersPage = () => {
 
     const columns = TableColumns(Titles.serviceOrdersPageTitle, () => refreshTable());
 
+    useEffect(() => {
+        const fetchServiceOrders = async () => {
+            await refreshTable();
+        };
+        fetchServiceOrders();
+    }, []);
+
     const refreshTable = async () => {
         try {
             const response = await listServiceOrders();
             const orders = response.data.serviceOrders || [];
-            const ordersWithClientNames = await fetchClientNames(orders);
+
+            const ordersWithMappedValues = orders.map(order => ({
+                ...order,
+                serviceFormat: mapAccessorToHeader(order.serviceFormat, Format),
+                status: mapAccessorToHeader(order.status, Status),
+                serviceType: mapAccessorToHeader(order.serviceType, Type),
+            }));
+
+            const ordersWithClientNames = await fetchClientNames(ordersWithMappedValues);
+
             setServiceOrders(ordersWithClientNames);
+            setFilteredServiceOrders(ordersWithClientNames);
         } catch (err) {
             console.error("Error refreshing table:", err);
         }
@@ -69,21 +86,6 @@ export const ServiceOrdersPage = () => {
         );
     }, [searchInput, serviceOrders]);
 
-
-    useEffect(() => {
-        const fetchServiceOrders = async () => {
-            try {
-                const response = await listServiceOrders();
-                const orders = response.data.serviceOrders || [];
-                const ordersWithClientNames = await fetchClientNames(orders)
-                setServiceOrders(ordersWithClientNames);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        fetchServiceOrders();
-    }, []);
-
     const handleSelection = (columnName) => {
         sortData(columnName, columns, filteredServiceOrders, setFilteredServiceOrders);
     };
@@ -95,8 +97,10 @@ export const ServiceOrdersPage = () => {
                 <UserBar title={Titles.serviceOrdersPageTitle}/>
                 <div className="aboveTableContainer">
                     <DropDownList
-                        columns={columns.map(col => col.Header)}
+                        columns={columns.filter(col => col.Header !== "")}
                         onSelectColumn={handleSelection}
+                        title={Titles.sortByTitle}
+                        className={"dropDownListContainer"}
                     />
                     <Searchbar onSearch={(input) => setSearchInput(input)}/>
                     <CustomButton

@@ -1,25 +1,25 @@
 import React, {Fragment, useEffect, useState} from "react";
 import {CustomCheckbox} from "../checkbox/CustomCheckbox";
 import {EditDeleteIconButtonsContainer} from "../iconButton/EditDeleteIconButtonsContainer";
-import {Titles} from "../../utils";
+import {Format, mapAccessorToHeader, Titles} from "../../utils";
 import {listServiceOrders} from "../../services";
 
 const checkBoxColumn = {
     Header: "",
     accessor: "checkBox",
-    style: { width: "8%" },
-    Cell: () => <CustomCheckbox />,
+    style: {width: "8%"},
+    Cell: () => <CustomCheckbox/>,
 }
 const phoneNumberColumn = {
     Header: "Phone number",
     accessor: "phoneNumber",
-    style: { width: "12%" },
+    style: {width: "12%"},
 }
 
 const emailColumn = {
     Header: "Email",
     accessor: "email",
-    style: { width: "22%" },
+    style: {width: "22%"},
 }
 
 const createTechniciansColumns = (countServiceOrders, type, refreshTable) => [
@@ -28,26 +28,25 @@ const createTechniciansColumns = (countServiceOrders, type, refreshTable) => [
     {
         Header: "First Name",
         accessor: "firstName",
-        style: { width: "15%" },
+        style: {width: "15%"},
     },
     {
         Header: "Last Name",
         accessor: "lastName",
-        style: { width: "20%" },
+        style: {width: "20%"},
     },
     phoneNumberColumn,
     emailColumn,
     {
         Header: "Number of Services",
         accessor: "numberOfServices",
-        style: { width: "10%" },
-        Cell: ({ row }) => <Fragment>{countServiceOrders(row)}</Fragment>,
+        style: {width: "10%"},
     },
     {
         Header: "",
         accessor: "edition",
-        style: { width: "12%" },
-        Cell: ({ row }) => <EditDeleteIconButtonsContainer type={type} row={row} refreshTable={refreshTable} />,
+        style: {width: "12%"},
+        Cell: ({row}) => <EditDeleteIconButtonsContainer type={type} row={row} refreshTable={refreshTable}/>,
     },
 ];
 
@@ -55,75 +54,75 @@ const createClientColumns = (countServiceOrders, selectServiceOrdersFormat, type
     {
         Header: "",
         accessor: "checkBox",
-        style: { width: "8%" },
-        Cell: () => <CustomCheckbox />,
+        style: {width: "8%"},
+        Cell: () => <CustomCheckbox/>,
     },
     {
         Header: "Name",
         accessor: "name",
-        style: { width: "20%" },
+        style: {width: "20%"},
     },
     phoneNumberColumn,
     emailColumn,
     {
         Header: "Service Formats",
         accessor: "serviceFormats",
-        style: { width: "15%" },
-        Cell: ({ row }) => <Fragment>{selectServiceOrdersFormat(row)}</Fragment>,
+        style: {width: "15%"},
     },
     {
         Header: "Number of Services",
         accessor: "numberOfServices",
-        style: { width: "10%" },
-        Cell: ({ row }) => <Fragment>{countServiceOrders(row)}</Fragment>,
+        style: {width: "10%"},
     },
     {
         Header: "",
         accessor: "edition",
-        style: { width: "12%" },
-        Cell: ({ row }) => <EditDeleteIconButtonsContainer type={type} row={row} refreshTable={refreshTable} />,
+        style: {width: "12%"},
+        Cell: ({row}) => (
+            <EditDeleteIconButtonsContainer type={type} row={row} refreshTable={refreshTable}/>
+        ),
     },
 ];
 
-const createServiceOrdersColumns = (countServiceOrders, type, refreshTable) => [
+const createServiceOrdersColumns = (type, refreshTable) => [
     {
         Header: "Client Name",
         accessor: "clientName",
-        style: { width: "20%" },
+        style: {width: "15%"},
     },
     {
         Header: "Type of Service",
         accessor: "serviceType",
-        style: { width: "15%" },
+        style: {width: "15%"},
     },
     {
         Header: "Service Format",
         accessor: "serviceFormat",
-        style: { width: "12%" },
+        style: {width: "12%"},
     },
     {
         Header: "Time of service",
         accessor: "dateTimeOfService",
-        style: { width: "12%" },
-        Cell: ({ row }) => (
+        style: {width: "15%"},
+        Cell: ({row}) => (
             <Fragment>{formatDateTime(row.original.dateTimeOfService)}</Fragment>
         ),
     },
     {
         Header: "Status",
         accessor: "status",
-        style: { width: "12%" },
+        style: {width: "12%"},
     },
     {
         Header: "Duration of service",
         accessor: "serviceDuration",
-        style: { width: "12%" },
+        style: {width: "12%"},
     },
     {
         Header: "",
         accessor: "edition",
-        style: { width: "8%" },
-        Cell: ({ row }) => <EditDeleteIconButtonsContainer type={type} row={row} refreshTable={refreshTable} />,
+        style: {width: "8%"},
+        Cell: ({row}) => <EditDeleteIconButtonsContainer type={type} row={row} refreshTable={refreshTable}/>
     },
 ];
 
@@ -182,7 +181,7 @@ export const TableColumns = (type, refreshTable) => {
                 new Set(
                     serviceOrders
                         .filter((order) => order.clientId === id)
-                        .map((order) => order.serviceFormat)
+                        .map((order) => mapAccessorToHeader(order.serviceFormat, Format))
                 )
             );
             return uniqueFormats.join(", ");

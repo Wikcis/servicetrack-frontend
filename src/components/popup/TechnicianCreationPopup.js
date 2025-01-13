@@ -66,40 +66,45 @@ export const TechnicianCreationPopup = ({triggerButton, setTriggerButton, refres
 
                         <div className="gridContainer">
                             <div className="gridItem">
-                                <span className="labelField">First Name</span>
-                                <CustomTextField
-                                    className="textField"
-                                    label={"Enter first name"}
-                                    setText={setFirstName}
-                                />
+                                <span className="labelField">Enter first name</span>
+                                <span className="textField">
+                                    <CustomTextField
+                                        label={"First Name"}
+                                        setText={setFirstName}
+                                    />
+                                </span>
+
                             </div>
 
                             <div className="gridItem">
-                                <span className="labelField">Last Name</span>
-                                <CustomTextField
-                                    className="textField"
-                                    label={"Enter last name"}
-                                    setText={setLastName}
-                                />
+                                <span className="labelField">Enter last name</span>
+                                <span className="textField">
+                                    <CustomTextField
+                                        label={"Last Name"}
+                                        setText={setLastName}
+                                    />
+                                </span>
                             </div>
 
 
                             <div className="gridItem">
-                                <span className="labelField">Email</span>
-                                <CustomTextField
-                                    className="textField"
-                                    label={"Enter Email"}
-                                    setText={setEmail}
-                                />
+                                <span className="labelField">Enter Email</span>
+                                <span className="textField">
+                                    <CustomTextField
+                                        label={"Email"}
+                                        setText={setEmail}
+                                    />
+                                </span>
                             </div>
 
                             <div className="gridItem">
-                                <span className="labelField">Phone number</span>
-                                <CustomTextField
-                                    className="textField"
-                                    label={"Enter phone number"}
-                                    setText={setPhoneNumber}
-                                />
+                                <span className="labelField">Enter phone number</span>
+                                <span className="textField">
+                                    <CustomTextField
+                                        label={"Phone number"}
+                                        setText={setPhoneNumber}
+                                    />
+                                </span>
                             </div>
                         </div>
 

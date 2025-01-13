@@ -4,21 +4,32 @@ import {CustomButton} from "../button/CustomButton";
 import React, {useEffect} from "react";
 import {IconXButton} from "../iconButton/IconXButton";
 import {DropDownList} from "../dropDownList/DropDownList";
-import {Titles} from "../../utils";
+import {Status, Titles, Type, Format} from "../../utils";
 import {EmptyFieldsPopup} from "./EmptyFieldsPopup";
+import {CustomDatepicker} from "../datepicker/CustomDatepicker";
+import dayjs from "dayjs";
+import {CustomTimePicker} from "../timepicker/CustomTimePicker";
+import {listClients, listTechnicians} from "../../services";
 
 export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton, refreshTable}) => {
 
     const [name, setName] = React.useState("");
+    const [technicianName, setTechnicianName] = React.useState("");
     const [status, setStatus] = React.useState("");
     const [date, setDate] = React.useState("");
     const [type, setType] = React.useState("");
     const [format, setFormat] = React.useState("");
     const [description, setDescription] = React.useState("");
+    const [comment, setComment] = React.useState("");
+    const [duration, setDuration] = React.useState("");
     const [emptyWarningTrigger, setEmptyWarningTrigger] = React.useState(false);
+    const [formattedClients, setFormattedClients] = React.useState("")
+    const [formattedTechnicians, setFormattedTechnicians] = React.useState("")
+
 
     const clearValues = () => {
         setName("");
+        setTechnicianName("")
         setStatus("");
         setDate("");
         setType("");
@@ -27,22 +38,63 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton, refr
     };
 
     const createRequestBody = () => {
+        console.log(type + " " + format + " " + description + " " + status + " " + name);
 
-        if(name === "" || description === "" || date === ""){
-
+        if (name === "" || description === "") {
             setEmptyWarningTrigger(true);
             return null;
         }
 
         return {
             id: window.crypto.randomUUID(),
+            technicianId: technicianName,
+            clientId: name,
             serviceType: type,
             serviceFormat: format,
             serviceDescription: description,
             dateTimeOfService: date,
             status: status,
+            serviceDuration: duration,
+            comment: comment
         }
     }
+
+    useEffect(() => {
+        const fetchClients = async () => {
+            try {
+                const response = await listClients();
+                const data = response.data.clients || [];
+
+                const formattedClients = data.map(client => ({
+                    Header: client.name,
+                    accessor: client.id,
+                }));
+                setFormattedClients(formattedClients);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchClients();
+    }, []);
+
+    useEffect(() => {
+        const fetchTechnicians = async () => {
+            try {
+                const response = await listTechnicians();
+                const data = response.data.technicians || [];
+
+                const formattedTechnicians = data.map(technician => ({
+                    Header: technician.firstName + " " + technician.lastName,
+                    accessor: technician.id
+                }));
+                setFormattedTechnicians(formattedTechnicians);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchTechnicians();
+    }, []);
+
 
     useEffect(() => {
         if (triggerButton) {
@@ -72,58 +124,109 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton, refr
                         </div>
 
                         <div className="gridContainer">
-                            <div className="gridItem">
-                                <span className="labelField">Client Name</span>
-                                <CustomTextField
-                                    className="textField"
-                                    label={"Enter client name"}
-                                    setText={setName}
-                                />
+
+                            <div className="rowContainer">
+                                <div className="gridItem">
+                                    <span className="labelField">Enter client name</span>
+                                    <DropDownList
+                                        columns={formattedClients}
+                                        onSelectColumn={setName}
+                                        title={Titles.clientNameTitle}
+                                        className={"popUpDropDownListContainer"}
+                                    />
+                                </div>
+
+                                <div className="gridItem">
+                                    <span className="labelField">Enter Technician name</span>
+                                    <DropDownList
+                                        columns={formattedTechnicians}
+                                        onSelectColumn={setTechnicianName}
+                                        title={Titles.technicianNameTitle}
+                                        className={"popUpDropDownListContainer"}
+                                    />
+                                </div>
+
                             </div>
 
-                            <div className="gridItem">
-                                <span className="labelField">Status</span>
-                                {/*<DropDownList*/}
-                                {/*    className="textField"*/}
-                                {/*    label={"Enter Email"}*/}
-                                {/*/>*/}
+
+                            <div className="rowContainer">
+                                <div className="gridItem">
+                                    <span className="labelField">Select Status</span>
+                                    <DropDownList
+                                        columns={Status}
+                                        onSelectColumn={setStatus}
+                                        title={Titles.serviceStatusTitle}
+                                        className={"popUpDropDownListContainer"}
+                                    />
+                                </div>
+
+                                <div className="gridItem">
+                                    <span className="labelField">Pick Date of service</span>
+                                    <CustomDatepicker
+                                        className="popUpDatepicker"
+                                        title="Date of service"
+                                        onSelectedDate={setDate}
+                                        minDate={dayjs()}
+                                        maxDate={dayjs("2035-12-31")}
+                                    />
+                                </div>
                             </div>
 
-                            <div className="gridItem">
-                                <span className="labelField">Date of service</span>
-                                {/*<CustomTextField*/}
-                                {/*    className="textField"*/}
-                                {/*    label={"Pick Date"}*/}
-                                {/*    setText={setDate}*/}
-                                {/*/>*/}
+                            <div className="rowContainer">
+                                <div className="gridItem">
+                                    <span className="labelField">Select service type</span>
+                                    <DropDownList
+                                        columns={Type}
+                                        onSelectColumn={setType}
+                                        title={Titles.serviceTypeTitle}
+                                        className={"popUpDropDownListContainer"}
+                                    />
+                                </div>
+
+                                <div className="gridItem">
+                                    <span className="labelField">Select service format</span>
+                                    <DropDownList
+                                        columns={Format}
+                                        onSelectColumn={setFormat}
+                                        title={Titles.serviceFormatTitle}
+                                        className={"popUpDropDownListContainer"}
+                                    />
+                                </div>
                             </div>
 
-                            <div className="gridItem">
-                                <span className="labelField">Type</span>
-                                {/*<CustomTextField*/}
-                                {/*    className="textField"*/}
-                                {/*    label={"Select service type"}*/}
-                                {/*    setText={setStatus}*/}
-                                {/*/>*/}
-                            </div>
 
                             <div className="gridItem">
-                                <span className="labelField">Format</span>
-                                {/*<CustomTextField*/}
-                                {/*    className="textField"*/}
-                                {/*    label={"Select service format"}*/}
-                                {/*    setText={setFormat}*/}
-                                {/*/>*/}
+                                <span className="labelField">Enter description of the service</span>
+                                <span className="description">
+                                    <CustomTextField
+                                        label={"Description"}
+                                        setText={setDescription}
+                                    />
+                                </span>
                             </div>
 
-                            <div className="gridItem">
-                                <span className="labelField">Description</span>
-                                <CustomTextField
-                                    className="textField"
-                                    label={"Enter description of the service"}
-                                    setText={setDescription}
-                                />
+
+                            <div className="rowContainer">
+                                <div className="gridItem">
+                                    <span className="labelField">Enter comment of the service</span>
+                                    <span className="textField">
+                                        <CustomTextField
+                                            label={"Comment"}
+                                            setText={setComment}
+                                        />
+                                    </span>
+                                </div>
+
+                                <div className="gridItem">
+                                    <span className="labelField">Select Service Duration</span>
+                                    <CustomTimePicker
+                                        onSelectedTime={setDuration}
+                                        title={Titles.serviceDurationTitle}
+                                        className={"popUpTimepicker"}
+                                    />
+                                </div>
                             </div>
+
                         </div>
 
                         <div className="buttonContainer">
@@ -136,7 +239,6 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton, refr
                                 Save
                             </CustomButton>
                         </div>
-
                     </div>
                 </div>
 
