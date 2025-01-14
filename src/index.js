@@ -9,6 +9,7 @@ import {
     ClientsListPage,
     ServiceOrdersPage
 } from "./pages";
+import {ApiContextProvider} from "./context";
 
 const router = createBrowserRouter([
     {
@@ -32,7 +33,7 @@ const router = createBrowserRouter([
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <React.StrictMode>
+    <ApiContextProvider>
         <RouterProvider router={router}/>
-    </React.StrictMode>
+    </ApiContextProvider>
 );

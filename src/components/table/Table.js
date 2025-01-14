@@ -2,20 +2,20 @@ import React from "react";
 import {useTable} from "react-table";
 import {TableColumns} from "./TableColumns";
 
-export const Table = ({data, type, refreshTable}) => {
-    const columns = TableColumns(type, refreshTable);
+export const Table = ({data = [], type}) => {
+
+    const columns = React.useMemo(() => TableColumns(type), [type]);
+
 
     const {getTableProps, getTableBodyProps, headerGroups, rows, prepareRow} = useTable({columns, data});
     return (
         <div className="tableContainer">
             <table {...getTableProps()} key={getTableProps.id}>
                 <thead>
-                {headerGroups.map(headerGroup => (
-                    <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
-                        {headerGroup.headers.map((column) => (
-                            <th {...column.getHeaderProps()}
-                                key={column.id}
-                                style={column.style}>
+                {headerGroups.map((headerGroup, index) => (
+                    <tr {...headerGroup.getHeaderGroupProps()} key={`headerGroup-${index}`}>
+                        {headerGroup.headers.map((column, colIndex) => (
+                            <th {...column.getHeaderProps()} key={`header-${colIndex}`} style={column.style}>
                                 {column.render("Header")}
                             </th>
                         ))}
@@ -23,20 +23,20 @@ export const Table = ({data, type, refreshTable}) => {
                 ))}
                 </thead>
                 <tbody {...getTableBodyProps()}>
-                {rows.map((row) => {
-                    prepareRow(row)
+                {rows.map((row, rowIndex) => {
+                    prepareRow(row);
                     return (
-                        <tr {...row.getRowProps()} key={row.id}>
-                            {row.cells.map((cell) => (
-                                <td {...cell.getCellProps()} key={cell.column.id}>
+                        <tr {...row.getRowProps()} key={`row-${rowIndex}`}>
+                            {row.cells.map((cell, cellIndex) => (
+                                <td {...cell.getCellProps()} key={`cell-${cellIndex}`}>
                                     {cell.render("Cell")}
                                 </td>
                             ))}
                         </tr>
-                    )
+                    );
                 })}
                 </tbody>
             </table>
         </div>
-    )
-}
+    );
+};

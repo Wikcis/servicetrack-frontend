@@ -7,6 +7,7 @@ export const mapAccessorToHeader = (value, mappingArray) => {
 };
 
 export const sortData = (columnName, columns, filteredData, setFilteredData) => {
+
     const column = columns.find((col) => col.accessor === columnName);
 
     if (!column) {

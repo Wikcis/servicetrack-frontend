@@ -1,17 +1,19 @@
 import Popup from "reactjs-popup";
 import {CustomTextField} from "../textField/CustomTextField";
 import {CustomButton} from "../button/CustomButton";
-import React, {useEffect} from "react";
+import React, {useContext, useEffect} from "react";
 import {IconXButton} from "../iconButton/IconXButton";
 import {DropDownList} from "../dropDownList/DropDownList";
-import {Status, Titles, Type, Format} from "../../utils";
+import {Format, Status, Titles, Type} from "../../utils";
 import {EmptyFieldsPopup} from "./EmptyFieldsPopup";
 import {CustomDatepicker} from "../datepicker/CustomDatepicker";
 import dayjs from "dayjs";
 import {CustomTimePicker} from "../timepicker/CustomTimePicker";
-import {listClients, listTechnicians} from "../../services";
+import {ApiContext} from "../../context";
 
-export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton, refreshTable}) => {
+export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => {
+
+    const {refreshServiceOrders, technicians, filteredClients} = useContext(ApiContext);
 
     const [name, setName] = React.useState("");
     const [technicianName, setTechnicianName] = React.useState("");
@@ -23,9 +25,8 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton, refr
     const [comment, setComment] = React.useState("");
     const [duration, setDuration] = React.useState("");
     const [emptyWarningTrigger, setEmptyWarningTrigger] = React.useState(false);
-    const [formattedClients, setFormattedClients] = React.useState("")
-    const [formattedTechnicians, setFormattedTechnicians] = React.useState("")
-
+    const [formattedClients, setFormattedClients] = React.useState([])
+    const [formattedTechnicians, setFormattedTechnicians] = React.useState([])
 
     const clearValues = () => {
         setName("");
@@ -59,48 +60,31 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton, refr
         }
     }
 
-    useEffect(() => {
-        const fetchClients = async () => {
-            try {
-                const response = await listClients();
-                const data = response.data.clients || [];
+    const formatClients = React.useCallback(() => {
+        const formattedClients = filteredClients.map(client => ({
+            Header: client.name,
+            accessor: client.id,
+        }));
+        setFormattedClients(formattedClients);
+    }, [filteredClients]);
 
-                const formattedClients = data.map(client => ({
-                    Header: client.name,
-                    accessor: client.id,
-                }));
-                setFormattedClients(formattedClients);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        fetchClients();
-    }, []);
 
-    useEffect(() => {
-        const fetchTechnicians = async () => {
-            try {
-                const response = await listTechnicians();
-                const data = response.data.technicians || [];
-
-                const formattedTechnicians = data.map(technician => ({
-                    Header: technician.firstName + " " + technician.lastName,
-                    accessor: technician.id
-                }));
-                setFormattedTechnicians(formattedTechnicians);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        fetchTechnicians();
-    }, []);
+    const formatTechnicians = React.useCallback(() => {
+        const formattedTechnicians = technicians.map(technician => ({
+            Header: technician.firstName + " " + technician.lastName,
+            accessor: technician.id
+        }));
+        setFormattedTechnicians(formattedTechnicians);
+    }, [technicians]);
 
 
     useEffect(() => {
         if (triggerButton) {
             clearValues();
+            formatClients();
+            formatTechnicians();
         }
-    }, [triggerButton]);
+    }, [formatClients, formatTechnicians, triggerButton]);
 
     return (
         <div>
@@ -111,7 +95,7 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton, refr
                 closeOnDocumentClick={false}
                 onClose={() => {
                     clearValues();
-                    refreshTable();
+                    refreshServiceOrders();
                 }}
 
             >

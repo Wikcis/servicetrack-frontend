@@ -1,55 +1,18 @@
 import {CustomButton, DropDownList, Searchbar, Sidebar, Table, TechnicianCreationPopup, UserBar} from "../components"
-import React, {useEffect, useState} from "react";
+import React, {useContext, useState} from "react";
 import "../styles"
-import {listServiceOrders, listTechnicians} from "../services";
 import {sortData, Titles} from "../utils";
 import {TableColumns} from "../components/table/TableColumns";
 import {PlusIcon} from "../assets";
+import {ApiContext} from "../context";
 
 export const TechniciansListPage = () => {
 
-    const [technicians, setTechnicians] = useState([]);
-    const [filteredTechnicians, setFilteredTechnicians] = useState([]);
-    const [searchInput, setSearchInput] = useState("");
+    const {filteredTechnicians, setFilteredTechnicians, loading, searchTechnicians} = useContext(ApiContext);
+
     const [triggerButton, setTriggerButton] = useState(false);
 
-    const columns = TableColumns(Titles.techniciansPageTitle, () => refreshTable());
-
-    useEffect(() => {
-        const fetchTechnicians = async () => {
-            refreshTable();
-        };
-        fetchTechnicians();
-    }, []);
-
-    useEffect(() => {
-        const search = searchInput === "" ? searchInput : searchInput.toLowerCase();
-        setFilteredTechnicians(technicians.filter((technician) => {
-            return (technician.firstName.toLowerCase().includes(search) || technician.lastName.toLowerCase().includes(search) || technician.phoneNumber.toString().includes(search) || technician.email.toLowerCase().includes(search));
-        }));
-    }, [searchInput, technicians]);
-
-    const refreshTable = async () => {
-        try {
-            const serviceOrdersResponse = await listServiceOrders();
-            const serviceOrdersData = serviceOrdersResponse.data.serviceOrders || [];
-
-            const techniciansResponse = await listTechnicians();
-            const techniciansData = techniciansResponse.data.technicians || [];
-            const techniciansWithAdditionalData = techniciansData.map(technician => {
-                const technicianOrders = serviceOrdersData.filter(order => order.technicianId === technician.id);
-
-                return {
-                    ...technician, numberOfServices: technicianOrders.length,
-                };
-            });
-
-            setTechnicians(techniciansWithAdditionalData);
-            setFilteredTechnicians(techniciansWithAdditionalData);
-        } catch (err) {
-            console.log("Error refreshing table:", err);
-        }
-    };
+    const columns = TableColumns(Titles.techniciansPageTitle);
 
     const handleSelection = (columnName) => {
         sortData(columnName, columns, filteredTechnicians, setFilteredTechnicians);
@@ -66,7 +29,7 @@ export const TechniciansListPage = () => {
                         title={Titles.sortByTitle}
                         className={"dropDownListContainer"}
                     />
-                    <Searchbar onSearch={(input) => setSearchInput(input)}/>
+                    <Searchbar onSearch={(input) => searchTechnicians(input)}/>
                     <CustomButton
                         className="addButton"
                         icon={<PlusIcon/>}
@@ -75,16 +38,16 @@ export const TechniciansListPage = () => {
                         Add technician
                     </CustomButton>
                 </div>
-                <Table
-                    data={filteredTechnicians}
-                    type={Titles.techniciansPageTitle}
-                    refreshTable={refreshTable}
-                />
+                {!loading ? (
+                    <Table
+                        data={filteredTechnicians || []}
+                        type={Titles.techniciansPageTitle}
+                    />
+                ) : null}
             </div>
             <TechnicianCreationPopup
                 triggerButton={triggerButton}
                 setTriggerButton={setTriggerButton}
-                refreshTable={() => refreshTable()}
             />
         </div>
 

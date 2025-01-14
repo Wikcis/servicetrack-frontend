@@ -1,7 +1,11 @@
 import {Logo} from "../../assets";
 import {SidebarData} from "./SidebarData";
+import {useNavigate} from "react-router-dom";
 
-export const Sidebar = ({type}) => {
+export const Sidebar = () => {
+
+    const navigate = useNavigate();
+
     return (
         <div className="sidebar">
             <div className="logoContainer">
@@ -14,7 +18,7 @@ export const Sidebar = ({type}) => {
                             className="row"
                             id={window.location.pathname === item.link ? "active" : ""}
                             key={index}
-                            onClick={() => (window.location.pathname = item.link)}
+                            onClick={() => navigate(item.link)}
                         >
                             <div id="icon">{item.icon}</div>
                             <div id="title">{item.title}</div>
