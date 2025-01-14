@@ -1,12 +1,15 @@
 import Popup from "reactjs-popup";
 import {CustomTextField} from "../textField/CustomTextField";
 import {CustomButton} from "../button/CustomButton";
-import React, {useEffect} from "react";
+import React, {useContext, useEffect} from "react";
 import {IconXButton} from "../iconButton/IconXButton";
 import {Titles} from "../../utils";
 import {EmptyFieldsPopup} from "./EmptyFieldsPopup";
+import {ApiContext} from "../../context";
 
-export const TechnicianCreationPopup = ({triggerButton, setTriggerButton, refreshTable}) => {
+export const TechnicianCreationPopup = ({triggerButton, setTriggerButton}) => {
+
+    const {refreshTechnicians} = useContext(ApiContext);
 
     const [firstName, setFirstName] = React.useState("");
     const [lastName, setLastName] = React.useState("");
@@ -53,11 +56,11 @@ export const TechnicianCreationPopup = ({triggerButton, setTriggerButton, refres
                 closeOnDocumentClick={false}
                 onClose={() => {
                     clearValues();
-                    refreshTable();
+                    refreshTechnicians();
                 }}
             >
                 <div className="popupOverlay">
-                    <div className="popUpContainer">
+                    <div className="singleColumnPopUpContainer">
 
                         <div className="popupHeader">
                             <h3 className="popupTitle">Add New Technician</h3>

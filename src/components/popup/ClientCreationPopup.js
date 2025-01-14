@@ -2,11 +2,14 @@ import Popup from "reactjs-popup";
 import {CustomTextField} from "../textField/CustomTextField";
 import {CustomButton} from "../button/CustomButton";
 import {IconXButton} from "../iconButton/IconXButton";
-import React, {useEffect} from "react";
+import React, {useContext, useEffect} from "react";
 import {Titles} from "../../utils";
 import {EmptyFieldsPopup} from "./EmptyFieldsPopup";
+import {ApiContext} from "../../context";
 
-export const ClientCreationPopup = ({triggerButton, setTriggerButton, refreshTable}) => {
+export const ClientCreationPopup = ({triggerButton, setTriggerButton}) => {
+
+    const {refreshClients} = useContext(ApiContext);
 
     const [name, setName] = React.useState("");
     const [email, setEmail] = React.useState("");
@@ -21,7 +24,7 @@ export const ClientCreationPopup = ({triggerButton, setTriggerButton, refreshTab
 
     const createRequestBody = () => {
 
-        if(name === "" || email === "" || phoneNumber === "") {
+        if (name === "" || email === "" || phoneNumber === "") {
             setEmptyWarningTrigger(true);
             return null;
         }
@@ -49,11 +52,11 @@ export const ClientCreationPopup = ({triggerButton, setTriggerButton, refreshTab
                 closeOnDocumentClick={false}
                 onClose={() => {
                     clearValues();
-                    refreshTable();
+                    refreshClients();
                 }}
             >
                 <div className="popupOverlay">
-                    <div className="popUpContainer">
+                    <div className="singleColumnPopUpContainer">
 
                         <div className="popupHeader">
                             <h3 className="popupTitle">Add New Client</h3>
@@ -71,8 +74,6 @@ export const ClientCreationPopup = ({triggerButton, setTriggerButton, refreshTab
                                     />
                                 </span>
                             </div>
-
-                            <div></div>
 
                             <div className="gridItem">
                                 <span className="labelField">Enter Email</span>

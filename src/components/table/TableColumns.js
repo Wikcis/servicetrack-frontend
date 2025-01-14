@@ -1,8 +1,7 @@
-import React, {Fragment, useEffect, useState} from "react";
+import React, {Fragment} from "react";
 import {CustomCheckbox} from "../checkbox/CustomCheckbox";
 import {EditDeleteIconButtonsContainer} from "../iconButton/EditDeleteIconButtonsContainer";
-import {Format, mapAccessorToHeader, Titles} from "../../utils";
-import {listServiceOrders} from "../../services";
+import {Titles} from "../../utils";
 
 const checkBoxColumn = {
     Header: "",
@@ -22,7 +21,7 @@ const emailColumn = {
     style: {width: "22%"},
 }
 
-const createTechniciansColumns = (countServiceOrders, type, refreshTable) => [
+const createTechniciansColumns = (type) => [
 
     checkBoxColumn,
     {
@@ -46,11 +45,11 @@ const createTechniciansColumns = (countServiceOrders, type, refreshTable) => [
         Header: "",
         accessor: "edition",
         style: {width: "12%"},
-        Cell: ({row}) => <EditDeleteIconButtonsContainer type={type} row={row} refreshTable={refreshTable}/>,
+        Cell: ({row}) => <EditDeleteIconButtonsContainer type={type} row={row}/>,
     },
 ];
 
-const createClientColumns = (countServiceOrders, selectServiceOrdersFormat, type, refreshTable) => [
+const createClientColumns = (type) => [
     {
         Header: "",
         accessor: "checkBox",
@@ -79,12 +78,12 @@ const createClientColumns = (countServiceOrders, selectServiceOrdersFormat, type
         accessor: "edition",
         style: {width: "12%"},
         Cell: ({row}) => (
-            <EditDeleteIconButtonsContainer type={type} row={row} refreshTable={refreshTable}/>
+            <EditDeleteIconButtonsContainer type={type} row={row}/>
         ),
     },
 ];
 
-const createServiceOrdersColumns = (type, refreshTable) => [
+const createServiceOrdersColumns = (type) => [
     {
         Header: "Client Name",
         accessor: "clientName",
@@ -122,7 +121,7 @@ const createServiceOrdersColumns = (type, refreshTable) => [
         Header: "",
         accessor: "edition",
         style: {width: "8%"},
-        Cell: ({row}) => <EditDeleteIconButtonsContainer type={type} row={row} refreshTable={refreshTable}/>
+        Cell: ({row}) => <EditDeleteIconButtonsContainer type={type} row={row}/>
     },
 ];
 
@@ -143,64 +142,16 @@ const formatDateTime = (dateTime) => {
     }
 };
 
-
-export const TableColumns = (type, refreshTable) => {
-
-    const [serviceOrders, setServiceOrders] = useState([]);
-
-    useEffect(() => {
-        const fetchServiceOrders = async () => {
-            try {
-                const response = await listServiceOrders();
-                const orders = response.data.serviceOrders || [];
-                setServiceOrders(orders);
-            } catch (error) {
-                console.log(error);
-            }
-        };
-        fetchServiceOrders();
-    }, []);
-
-    const countServiceOrders = React.useCallback(
-        (row) => {
-            const id = row.original.id;
-            if (type === Titles.techniciansPageTitle) {
-                return serviceOrders.filter((order) => order.technicianId === id).length;
-            } else if (type === Titles.clientsPageTitle) {
-                return serviceOrders.filter((order) => order.clientId === id).length;
-            }
-            return 0;
-        },
-        [serviceOrders, type]
-    );
-
-    const selectServiceOrdersFormats = React.useCallback(
-        (row) => {
-            const id = row.original.id;
-            const uniqueFormats = Array.from(
-                new Set(
-                    serviceOrders
-                        .filter((order) => order.clientId === id)
-                        .map((order) => mapAccessorToHeader(order.serviceFormat, Format))
-                )
-            );
-            return uniqueFormats.join(", ");
-        },
-        [serviceOrders]
-    );
-
-    return React.useMemo(() => {
-        switch (type) {
-            case Titles.techniciansPageTitle:
-                return createTechniciansColumns(countServiceOrders, type, refreshTable);
-            case Titles.clientsPageTitle:
-                return createClientColumns(countServiceOrders, selectServiceOrdersFormats, type, refreshTable);
-            case Titles.serviceOrdersPageTitle:
-                return createServiceOrdersColumns(type, refreshTable);
-            default:
-                return [];
-        }
-    }, [countServiceOrders, selectServiceOrdersFormats, type, refreshTable]);
-}
-
+export const TableColumns = (type) => {
+    switch (type) {
+        case Titles.techniciansPageTitle:
+            return createTechniciansColumns(type);
+        case Titles.clientsPageTitle:
+            return createClientColumns(type);
+        case Titles.serviceOrdersPageTitle:
+            return createServiceOrdersColumns(type);
+        default:
+            return [];
+    }
+};
 
