@@ -4,7 +4,6 @@ import React, {useState} from "react";
 import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import 'dayjs/locale/en-gb';
-import dayjs from "dayjs";
 
 export const CustomDatepicker = ({onSelectedDate, title, className, minDate, maxDate}) => {
 
