@@ -7,7 +7,7 @@ import {
     NotFoundPage,
     TechniciansListPage,
     ClientsListPage,
-    ServiceOrdersPage
+    ServiceOrdersPage, ProfilePage
 } from "./pages";
 import {ApiContextProvider} from "./context";
 
@@ -28,6 +28,10 @@ const router = createBrowserRouter([
     {
         path: "/serviceorders",
         element: <ServiceOrdersPage/>,
+    },
+    {
+        path: "/profile",
+        element: <ProfilePage/>,
     }
 ])
 

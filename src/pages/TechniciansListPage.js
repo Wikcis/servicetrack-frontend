@@ -2,7 +2,7 @@ import {CustomButton, DropDownList, Searchbar, Sidebar, Table, TechnicianCreatio
 import React, {useContext, useState} from "react";
 import "../styles"
 import {sortData, Titles} from "../utils";
-import {TableColumns} from "../components/table/TableColumns";
+import {TableColumns} from "../components";
 import {PlusIcon} from "../assets";
 import {ApiContext} from "../context";
 

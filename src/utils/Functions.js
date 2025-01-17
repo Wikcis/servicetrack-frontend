@@ -1,5 +1,7 @@
 import {createTheme} from "@mui/material";
 import {colors} from "../styles";
+import {TableColumns} from "../components";
+import {Titles} from "./Values";
 
 export const mapAccessorToHeader = (value, mappingArray) => {
     const match = mappingArray.find(item => item.accessor === value);
@@ -52,3 +54,47 @@ export const Theme = createTheme({
         }
     }
 });
+
+const generateCSV = (csvContent, filename) => {
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", filename);
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+};
+
+const mapCSVContent = (orders) => {
+    const columns = TableColumns(Titles.serviceOrdersPageTitle);
+
+    const headers = columns.map(column => column.Header);
+
+    headers.shift();
+
+    return [
+        headers.join(","),
+        ...orders.map(order =>
+            columns.slice(1).map(column => `"${order[column.accessor] || ''}"`).join(",")
+        )
+    ].join('\n');
+}
+
+export const generateCSVForRange = (orders) => {
+
+    const content = mapCSVContent(orders)
+
+    generateCSV(content, "serviceOrdersInRange.csv");
+};
+
+export const generateCSVForClient = (orders) => {
+
+    const content = mapCSVContent(orders)
+
+    generateCSV(content, "serviceOrdersForClient.csv");
+};
+
