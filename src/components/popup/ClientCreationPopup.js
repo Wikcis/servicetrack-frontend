@@ -3,9 +3,10 @@ import {CustomTextField} from "../textField/CustomTextField";
 import {CustomButton} from "../button/CustomButton";
 import {IconXButton} from "../iconButton/IconXButton";
 import React, {useContext, useEffect} from "react";
-import {Titles} from "../../utils";
+import {isAlpha, isNumeric, Titles} from "../../utils";
 import {EmptyFieldsPopup} from "./EmptyFieldsPopup";
 import {ApiContext} from "../../context";
+import {WrongValuePopup} from "./WrongValuePopup";
 
 export const ClientCreationPopup = ({triggerButton, setTriggerButton}) => {
 
@@ -15,6 +16,7 @@ export const ClientCreationPopup = ({triggerButton, setTriggerButton}) => {
     const [email, setEmail] = React.useState("");
     const [phoneNumber, setPhoneNumber] = React.useState("");
     const [emptyWarningTrigger, setEmptyWarningTrigger] = React.useState(false);
+    const [wrongValuesTrigger, setWrongValuesTrigger] = React.useState(false);
 
     const clearValues = () => {
         setName("");
@@ -23,6 +25,11 @@ export const ClientCreationPopup = ({triggerButton, setTriggerButton}) => {
     };
 
     const createRequestBody = () => {
+
+        if(!isAlpha(name) || !isNumeric(phoneNumber)) {
+            setWrongValuesTrigger(true);
+            return null;
+        }
 
         if (name === "" || email === "" || phoneNumber === "") {
             setEmptyWarningTrigger(true);
@@ -71,6 +78,8 @@ export const ClientCreationPopup = ({triggerButton, setTriggerButton}) => {
                                     <CustomTextField
                                         label={"Name"}
                                         setText={setName}
+                                        maxLength={32}
+                                        alpha={true}
                                     />
                                 </span>
                             </div>
@@ -81,6 +90,7 @@ export const ClientCreationPopup = ({triggerButton, setTriggerButton}) => {
                                     <CustomTextField
                                         label={"Email"}
                                         setText={setEmail}
+                                        maxLength={32}
                                     />
                                 </span>
                             </div>
@@ -91,6 +101,8 @@ export const ClientCreationPopup = ({triggerButton, setTriggerButton}) => {
                                     <CustomTextField
                                         label={"Phone number"}
                                         setText={setPhoneNumber}
+                                        maxLength={9}
+                                        numeric={true}
                                     />
                                 </span>
 
@@ -114,6 +126,11 @@ export const ClientCreationPopup = ({triggerButton, setTriggerButton}) => {
                 <EmptyFieldsPopup
                     triggerButton={emptyWarningTrigger}
                     setTriggerButton={setEmptyWarningTrigger}
+                />
+
+                <WrongValuePopup
+                    triggerButton={wrongValuesTrigger}
+                    setTriggerButton={setWrongValuesTrigger}
                 />
             </Popup>
         </div>

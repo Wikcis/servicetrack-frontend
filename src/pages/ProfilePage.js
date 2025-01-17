@@ -14,7 +14,7 @@ export const ProfilePage = () => {
         <div className="app">
             <Sidebar/>
             <div className="mainContainer">
-                <UserBar title={Titles.clientsPageTitle}/>
+                <UserBar title={Titles.profileTitle}/>
 
                 <CustomButton
                     className="addButton"

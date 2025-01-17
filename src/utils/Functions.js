@@ -56,7 +56,7 @@ export const Theme = createTheme({
 });
 
 const generateCSV = (csvContent, filename) => {
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob([csvContent], {type: "text/csv;charset=utf-8;"});
 
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
@@ -97,4 +97,12 @@ export const generateCSVForClient = (orders) => {
 
     generateCSV(content, "serviceOrdersForClient.csv");
 };
+
+export const isNumeric = (inputValue) => {
+    return /^\d*$/.test(inputValue);
+}
+
+export const isAlpha = (inputValue) => {
+    return /^[a-zA-Z]*$/.test(inputValue);
+}
 

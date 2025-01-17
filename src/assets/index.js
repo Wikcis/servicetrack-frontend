@@ -2,6 +2,7 @@ export {ReactComponent as Logo} from './svg/logo.svg';
 export {ReactComponent as BinIcon} from './svg/bin-icon.svg';
 export {ReactComponent as EditIcon} from './svg/edit-icon.svg';
 export {ReactComponent as PlusIcon} from './svg/plus-icon.svg';
+export {ReactComponent as ProfileIcon} from './svg/profile-icon.svg';
 export {ReactComponent as Triangle} from './svg/triangle-icon.svg';
 export {ReactComponent as XIcon} from './svg/x-icon.svg';
 export {ReactComponent as CalendarIcon} from './svg/calendar-icon.svg';

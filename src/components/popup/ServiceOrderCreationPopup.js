@@ -150,7 +150,7 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => 
                                         className="popUpDatepicker"
                                         title="Date of service"
                                         onSelectedDate={setDate}
-                                        minDate={dayjs()}
+                                        minDate={dayjs().add(1, 'day')}
                                         maxDate={dayjs("2035-12-31")}
                                     />
                                 </div>
@@ -185,6 +185,7 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => 
                                     <CustomTextField
                                         label={"Description"}
                                         setText={setDescription}
+                                        maxLength={512}
                                     />
                                 </span>
                             </div>
@@ -197,6 +198,7 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => 
                                         <CustomTextField
                                             label={"Comment"}
                                             setText={setComment}
+                                            maxLength={512}
                                         />
                                     </span>
                                 </div>
@@ -230,6 +232,7 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => 
                     triggerButton={emptyWarningTrigger}
                     setTriggerButton={setEmptyWarningTrigger}
                 />
+
             </Popup>
         </div>
     );

@@ -3,9 +3,10 @@ import {CustomTextField} from "../textField/CustomTextField";
 import {CustomButton} from "../button/CustomButton";
 import React, {useContext, useEffect} from "react";
 import {IconXButton} from "../iconButton/IconXButton";
-import {Titles} from "../../utils";
+import {isAlpha, isNumeric, Titles} from "../../utils";
 import {EmptyFieldsPopup} from "./EmptyFieldsPopup";
 import {ApiContext} from "../../context";
+import {WrongValuePopup} from "./WrongValuePopup";
 
 export const TechnicianCreationPopup = ({triggerButton, setTriggerButton}) => {
 
@@ -16,6 +17,7 @@ export const TechnicianCreationPopup = ({triggerButton, setTriggerButton}) => {
     const [email, setEmail] = React.useState("");
     const [phoneNumber, setPhoneNumber] = React.useState("");
     const [emptyWarningTrigger, setEmptyWarningTrigger] = React.useState(false);
+    const [wrongValuesTrigger, setWrongValuesTrigger] = React.useState(false);
 
     const clearValues = () => {
         setFirstName("");
@@ -25,6 +27,11 @@ export const TechnicianCreationPopup = ({triggerButton, setTriggerButton}) => {
     };
 
     const createRequestBody = () => {
+
+        if(!isAlpha(firstName) || !isAlpha(lastName) || !isNumeric(phoneNumber)) {
+            setWrongValuesTrigger(true);
+            return null;
+        }
 
         if (firstName === "" || lastName === "" || email === "" || phoneNumber === "") {
             setEmptyWarningTrigger(true);
@@ -74,6 +81,8 @@ export const TechnicianCreationPopup = ({triggerButton, setTriggerButton}) => {
                                     <CustomTextField
                                         label={"First Name"}
                                         setText={setFirstName}
+                                        maxLength={24}
+                                        alpha={true}
                                     />
                                 </span>
 
@@ -85,6 +94,8 @@ export const TechnicianCreationPopup = ({triggerButton, setTriggerButton}) => {
                                     <CustomTextField
                                         label={"Last Name"}
                                         setText={setLastName}
+                                        maxLength={32}
+                                        alpha={true}
                                     />
                                 </span>
                             </div>
@@ -96,6 +107,7 @@ export const TechnicianCreationPopup = ({triggerButton, setTriggerButton}) => {
                                     <CustomTextField
                                         label={"Email"}
                                         setText={setEmail}
+                                        maxLength={32}
                                     />
                                 </span>
                             </div>
@@ -106,6 +118,8 @@ export const TechnicianCreationPopup = ({triggerButton, setTriggerButton}) => {
                                     <CustomTextField
                                         label={"Phone number"}
                                         setText={setPhoneNumber}
+                                        maxLength={9}
+                                        numeric={true}
                                     />
                                 </span>
                             </div>
@@ -128,6 +142,11 @@ export const TechnicianCreationPopup = ({triggerButton, setTriggerButton}) => {
                 <EmptyFieldsPopup
                     triggerButton={emptyWarningTrigger}
                     setTriggerButton={setEmptyWarningTrigger}
+                />
+
+                <WrongValuePopup
+                    triggerButton={wrongValuesTrigger}
+                    setTriggerButton={setWrongValuesTrigger}
                 />
             </Popup>
         </div>

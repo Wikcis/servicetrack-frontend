@@ -23,6 +23,7 @@ export const Titles = {
     techniciansPageTitle: "Technicians",
     clientsPageTitle: "Clients",
     serviceOrdersPageTitle: "Service Orders",
+    profileTitle: "Your Profile",
     sortByTitle: "Sort By",
     serviceFormatTitle: "Service Format",
     serviceStatusTitle: "Service Values",
