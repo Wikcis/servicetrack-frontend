@@ -1,9 +1,9 @@
 import React from "react";
-import { Button, ThemeProvider } from "@mui/material";
+import {Button, ThemeProvider} from "@mui/material";
 import {Theme, Titles} from "../../utils";
 import {addClient, addServiceOrder, addTechnician} from "../../services";
 
-export const CustomButton = ({ children, className, setTriggerButton, icon, requestBody, type }) => {
+export const CustomButton = ({ children, className, setTriggerButton, icon, requestBody, type, generateCSV = () => [], data = () => [] }) => {
 
     const handleClick = async () => {
 
@@ -27,7 +27,12 @@ export const CustomButton = ({ children, className, setTriggerButton, icon, requ
                 default:
                     break;
             }
+        } else if (typeof data === "function") {
+            const tmp = data();
+
+            generateCSV(tmp);
         }
+
         setTriggerButton((prev) => !prev);
     };
 
