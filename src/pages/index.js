@@ -3,6 +3,7 @@ export * from './NotFoundPage';
 export * from './ServiceOrdersPage';
 export * from './ClientsListPage';
 export * from './ProfilePage';
+export * from './profilePage.css';
 export * from './LoginPage';
 export * from './loginPage.css';
 export * from './RegistrationPage';

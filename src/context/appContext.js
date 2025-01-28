@@ -12,6 +12,7 @@ export const ApiContextProvider = ({children}) => {
     const [clients, setClients] = useState([]);
     const [serviceOrders, setServiceOrders] = useState([]);
     const [technicians, setTechnicians] = useState([]);
+    const [user, setUser] = useState([]);
 
     const [filteredClients, setFilteredClients] = useState([]);
     const [filteredTechnicians, setFilteredTechnicians] = useState([]);
@@ -264,6 +265,22 @@ export const ApiContextProvider = ({children}) => {
         setFilteredServiceOrders(filtered);
     }, [serviceOrders]);
 
+    const fetchUser = useCallback(async () => {
+        let userResponse = {data: {users: []}};
+
+        try {
+            userResponse = await getMethod(REST_API_URLS.USERS_ME_URL);
+            if(userResponse) {
+                setUser(userResponse);
+            }
+            return userResponse;
+        } catch (err) {
+            console.error("Error refreshing users:", err);
+        }
+
+        return userResponse;
+    }, []);
+
     return (
         <AppContext.Provider
             value={{
@@ -283,7 +300,9 @@ export const ApiContextProvider = ({children}) => {
                 searchTechnicians,
                 searchServiceOrders,
                 loading,
-                fetchData
+                fetchData,
+                fetchUser,
+                user
             }}
         >
             {children}

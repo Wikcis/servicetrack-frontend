@@ -9,7 +9,7 @@ import {AppContext} from "../context";
 
 export const ClientsListPage = () => {
 
-    const { fetchData ,searchClients, filteredClients, setFilteredClients, loading} = useContext(AppContext);
+    const { fetchData, searchClients, filteredClients, setFilteredClients, loading} = useContext(AppContext);
 
     const [triggerButton, setTriggerButton] = useState(false);
 

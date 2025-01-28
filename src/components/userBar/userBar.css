@@ -12,7 +12,20 @@
 }
 
 .userNameContainer {
+    font-weight: bold;
+}
+
+.userWithIconContainer {
     display: flex;
     flex-direction: row;
-    font-weight: bold;
+    right: 0;
+    position: absolute;
+}
+
+.profileIcon {
+    width: 45px;
+    height: 45px;
+    cursor: pointer;
+    min-width: 10px;
+    min-height: 10px;
 }
