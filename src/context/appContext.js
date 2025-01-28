@@ -1,10 +1,13 @@
-import React, {createContext, useCallback, useEffect, useState} from "react";
-import {listClients, listServiceOrders, listTechnicians} from "../services";
+import React, {createContext, useCallback, useState} from "react";
+import {getMethod} from "../services";
 import {Format, mapAccessorToHeader, Status, Type} from "../utils";
+import {REST_API_URLS} from "../api/apiConstants";
 
-export const ApiContext = createContext();
+export const AppContext = createContext();
 
 export const ApiContextProvider = ({children}) => {
+
+    const [dataFetched, setDataFetched] = useState(false);
 
     const [clients, setClients] = useState([]);
     const [serviceOrders, setServiceOrders] = useState([]);
@@ -17,14 +20,16 @@ export const ApiContextProvider = ({children}) => {
     const [loading, setLoading] = useState(true);
 
     const fetchClients = useCallback(async () => {
-        let clientsResponse =  {data: {clients: []}};
+        let clientsResponse = {data: {clients: []}};
 
         try {
-            clientsResponse = await listClients();
 
-            setClients(clientsResponse.data.clients);
-            setFilteredClients(clientsResponse.data.clients);
-
+            clientsResponse = await getMethod(REST_API_URLS.CLIENTS_URL);
+            if (clientsResponse) {
+                setClients(clientsResponse.clients);
+                setFilteredClients(clientsResponse.clients);
+            }
+            return clientsResponse;
         } catch (err) {
             console.error("Error refreshing clients:", err);
         }
@@ -33,13 +38,15 @@ export const ApiContextProvider = ({children}) => {
     }, []);
 
     const fetchTechnicians = useCallback(async () => {
-        let techniciansResponse =  {data: {technicians: []}};
+        let techniciansResponse = {data: {technicians: []}};
 
         try {
-            techniciansResponse = await listTechnicians();
-            setTechnicians(techniciansResponse.data.technicians);
-            setFilteredTechnicians(techniciansResponse.data.technicians);
+            techniciansResponse = await getMethod(REST_API_URLS.TECHNICIANS_URL);
 
+            if(techniciansResponse) {
+                setTechnicians(techniciansResponse.technicians);
+                setFilteredTechnicians(techniciansResponse.technicians);
+            }
             return techniciansResponse;
         } catch (err) {
             console.error("Error refreshing technicians:", err);
@@ -50,13 +57,16 @@ export const ApiContextProvider = ({children}) => {
 
     const fetchServiceOrders = useCallback(async () => {
 
-        let ordersResponse =  {data: {serviceOrders: []}};
+        let ordersResponse = {data: {serviceOrders: []}};
 
         try {
-            ordersResponse = await listServiceOrders();
+            ordersResponse = await getMethod(REST_API_URLS.SERVICEORDERS_URL);
 
-            setServiceOrders(ordersResponse.data.serviceOrders);
-            setFilteredServiceOrders(ordersResponse.data.serviceOrders);
+            if(ordersResponse) {
+                setServiceOrders(ordersResponse.serviceOrders);
+                setFilteredServiceOrders(ordersResponse.serviceOrders);
+
+            }
 
             return ordersResponse;
         } catch (err) {
@@ -120,43 +130,71 @@ export const ApiContextProvider = ({children}) => {
         setFilteredServiceOrders(mappedOrders);
     }, []);
 
-    useEffect(() => {
-        const fetchData = async () => {
+    const fetchData = async () => {
+        if (dataFetched) return;
 
-            setLoading(true);
-            console.log(clients.length + " " + technicians.length + " " + serviceOrders.length + " ASdasdas")
+        setLoading(true);
 
+        try {
             const clientsResponse = await fetchClients();
             const techniciansResponse = await fetchTechnicians();
             const serviceOrdersResponse = await fetchServiceOrders();
 
-            createClientsWithAdditionalData(clientsResponse.data.clients, serviceOrdersResponse.data.serviceOrders);
-            createTechniciansWithAdditionalData(techniciansResponse.data.technicians, serviceOrdersResponse.data.serviceOrders);
-            createServiceOrdersWithAdditionalData(clientsResponse.data.clients, serviceOrdersResponse.data.serviceOrders);
+            if (clientsResponse && serviceOrdersResponse) {
+                const updatedClients = createClientsWithAdditionalData(
+                    clientsResponse.clients,
+                    serviceOrdersResponse.serviceOrders
+                );
+                const updatedServiceOrders = createServiceOrdersWithAdditionalData(
+                    clientsResponse.clients,
+                    serviceOrdersResponse.serviceOrders
+                );
 
+                if (techniciansResponse && serviceOrdersResponse) {
+                    const updatedTechnicians = createTechniciansWithAdditionalData(
+                        techniciansResponse.technicians,
+                        serviceOrdersResponse.serviceOrders
+                    );
+                    setTechnicians(updatedTechnicians);
+                }
+
+                setClients(updatedClients);
+                setServiceOrders(updatedServiceOrders);
+            }
+
+            if (techniciansResponse && serviceOrdersResponse) {
+                const updatedTechnicians = createTechniciansWithAdditionalData(
+                    techniciansResponse.technicians,
+                    serviceOrdersResponse.serviceOrders
+                );
+                setTechnicians(updatedTechnicians);
+            }
+
+            setDataFetched(true);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
             setLoading(false);
-        };
-
-        fetchData();
-    }, []);
+        }
+    };
 
     const refreshClients = useCallback(async () => {
         const clientsResponse = await fetchClients();
-        
-        createClientsWithAdditionalData(clientsResponse.data.clients, serviceOrders);
+
+        createClientsWithAdditionalData(clientsResponse.clients, serviceOrders);
     }, [fetchClients]);
 
     const refreshTechnicians = useCallback(async () => {
         const techniciansResponse = await fetchTechnicians();
 
-        createTechniciansWithAdditionalData(techniciansResponse.data.technicians, serviceOrders);
+        createTechniciansWithAdditionalData(techniciansResponse.technicians, serviceOrders);
     }, [fetchTechnicians]);
 
     const refreshServiceOrders = useCallback(async () => {
         const clientsResponse = await fetchClients();
         const ordersResponse = await fetchServiceOrders();
 
-        createServiceOrdersWithAdditionalData(clientsResponse.data.clients, ordersResponse.data.serviceOrders);
+        createServiceOrdersWithAdditionalData(clientsResponse.clients, ordersResponse.serviceOrders);
 
     }, [fetchServiceOrders]);
 
@@ -227,7 +265,7 @@ export const ApiContextProvider = ({children}) => {
     }, [serviceOrders]);
 
     return (
-        <ApiContext.Provider
+        <AppContext.Provider
             value={{
                 clients,
                 refreshClients,
@@ -244,10 +282,11 @@ export const ApiContextProvider = ({children}) => {
                 searchClients,
                 searchTechnicians,
                 searchServiceOrders,
-                loading
+                loading,
+                fetchData
             }}
         >
             {children}
-        </ApiContext.Provider>
+        </AppContext.Provider>
     );
 };

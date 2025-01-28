@@ -1,15 +1,15 @@
 import {ClientCreationPopup, CustomButton, DropDownList, Searchbar, Sidebar, Table, UserBar} from "../components";
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import "../styles";
 import {sortData, Titles} from "../utils";
 import "../components";
 import {TableColumns} from "../components";
 import {PlusIcon} from "../assets";
-import {ApiContext} from "../context";
+import {AppContext} from "../context";
 
 export const ClientsListPage = () => {
 
-    const {searchClients, filteredClients, setFilteredClients, loading} = useContext(ApiContext);
+    const { fetchData ,searchClients, filteredClients, setFilteredClients, loading} = useContext(AppContext);
 
     const [triggerButton, setTriggerButton] = useState(false);
 
@@ -18,6 +18,10 @@ export const ClientsListPage = () => {
     const handleSelection = (columnName) => {
         sortData(columnName, columns, filteredClients, setFilteredClients);
     };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     return (
         <div className="app">

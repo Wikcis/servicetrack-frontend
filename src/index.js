@@ -7,33 +7,52 @@ import {
     NotFoundPage,
     TechniciansListPage,
     ClientsListPage,
-    ServiceOrdersPage, ProfilePage
+    ServiceOrdersPage, ProfilePage, LoginPage, RegistrationPage
 } from "./pages";
-import {ApiContextProvider} from "./context";
+import {ApiContextProvider, REST_API_URLS} from "./context";
+import {ProtectedRoute} from "./components";
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <TechniciansListPage/>,
-        errorElement: <NotFoundPage/>
+        element: (
+            <ProtectedRoute element={<TechniciansListPage />} />
+        ),
+        errorElement: <NotFoundPage />,
     },
     {
-        path: "/technicians",
-        element: <TechniciansListPage/>,
+        path: REST_API_URLS.ONLY_TECHNICIANS_URL,
+        element: (
+            <ProtectedRoute element={<TechniciansListPage />} />
+        ),
     },
     {
-        path: "/clients",
-        element: <ClientsListPage/>,
+        path: REST_API_URLS.ONLY_CLIENTS_URL,
+        element: (
+            <ProtectedRoute element={<ClientsListPage />} />
+        ),
     },
     {
-        path: "/serviceorders",
-        element: <ServiceOrdersPage/>,
+        path: REST_API_URLS.ONLY_SERVICEORDERS_URL,
+        element: (
+            <ProtectedRoute element={<ServiceOrdersPage />} />
+        ),
     },
     {
-        path: "/profile",
-        element: <ProfilePage/>,
-    }
-])
+        path: REST_API_URLS.ONLY_PROFILE_URL,
+        element: (
+            <ProtectedRoute element={<ProfilePage />} />
+        ),
+    },
+    {
+        path: REST_API_URLS.ONLY_LOGIN_URL,
+        element: <LoginPage />,
+    },
+    {
+        path: REST_API_URLS.ONLY_REGISTRATION_URL,
+        element: <RegistrationPage />,
+    },
+]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

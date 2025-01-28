@@ -5,12 +5,12 @@ import {IconXButton} from "../iconButton/IconXButton";
 import React, {useContext, useEffect} from "react";
 import {isAlpha, isNumeric, Titles} from "../../utils";
 import {EmptyFieldsPopup} from "./EmptyFieldsPopup";
-import {ApiContext} from "../../context";
+import {AppContext} from "../../context";
 import {WrongValuePopup} from "./WrongValuePopup";
 
 export const ClientCreationPopup = ({triggerButton, setTriggerButton}) => {
 
-    const {refreshClients} = useContext(ApiContext);
+    const {refreshClients} = useContext(AppContext);
 
     const [name, setName] = React.useState("");
     const [email, setEmail] = React.useState("");
@@ -36,12 +36,12 @@ export const ClientCreationPopup = ({triggerButton, setTriggerButton}) => {
             return null;
         }
 
-        return {
+        return JSON.stringify({
             id: window.crypto.randomUUID(),
             name: name,
             email: email,
             phoneNumber: phoneNumber
-        };
+        });
     };
 
     useEffect(() => {

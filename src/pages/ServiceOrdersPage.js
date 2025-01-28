@@ -1,14 +1,14 @@
 import {CustomButton, DropDownList, Searchbar, ServiceOrderCreationPopup, Sidebar, Table, UserBar} from "../components"
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import "../styles"
 import {sortData, Titles} from "../utils";
-import {TableColumns} from "../components/table/TableColumns";
+import {TableColumns} from "../components";
 import {PlusIcon} from "../assets";
-import {ApiContext} from "../context";
+import {AppContext} from "../context";
 
 export const ServiceOrdersPage = () => {
 
-    const {filteredServiceOrders, setFilteredServiceOrders, searchServiceOrders, loading } = useContext(ApiContext);
+    const { fetchData ,filteredServiceOrders, setFilteredServiceOrders, searchServiceOrders, loading } = useContext(AppContext);
 
     const [triggerButton, setTriggerButton] = useState(false);
 
@@ -17,6 +17,10 @@ export const ServiceOrdersPage = () => {
     const handleSelection = (columnName) => {
         sortData(columnName, columns, filteredServiceOrders, setFilteredServiceOrders);
     };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     return (
         <div className="app">

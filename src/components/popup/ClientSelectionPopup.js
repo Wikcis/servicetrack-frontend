@@ -2,14 +2,14 @@ import Popup from "reactjs-popup";
 import {CustomButton} from "../button/CustomButton";
 import {IconXButton} from "../iconButton/IconXButton";
 import React, {useContext, useEffect} from "react";
-import {generateCSVForClient, generateCSVForRange, Titles} from "../../utils";
+import {generateCSVForClient, Titles} from "../../utils";
 import {EmptyFieldsPopup} from "./EmptyFieldsPopup";
-import {ApiContext} from "../../context";
+import {AppContext} from "../../context";
 import {DropDownList} from "../dropDownList/DropDownList";
 
 export const ClientSelectionPopup = ({triggerButton, setTriggerButton}) => {
 
-    const {serviceOrders, filteredClients} = useContext(ApiContext);
+    const {serviceOrders, filteredClients} = useContext(AppContext);
     
     const [formattedClients, setFormattedClients] = React.useState([]);
     const [selectedClient, setSelectedClient] = React.useState([]);
@@ -31,9 +31,7 @@ export const ClientSelectionPopup = ({triggerButton, setTriggerButton}) => {
 
         const clientToCompare = filteredClients.find((item) => item.id === selectedClient);
 
-        const filteredOrders = serviceOrders.filter((order) => order.clientName === clientToCompare.name);
-
-        return filteredOrders;
+        return serviceOrders.filter((order) => order.clientName === clientToCompare.name);
     };
 
     const formatClients = React.useCallback(() => {
@@ -41,7 +39,6 @@ export const ClientSelectionPopup = ({triggerButton, setTriggerButton}) => {
             Header: client.name,
             accessor: client.id,
         }));
-        
         setFormattedClients(formattedClients);
     }, [filteredClients]);
 
@@ -84,6 +81,7 @@ export const ClientSelectionPopup = ({triggerButton, setTriggerButton}) => {
                                 setTriggerButton={setTriggerButton}
                                 generateCSV={generateCSVForClient}
                                 data={filterData}
+                                type={Titles.profileTitle}
                             >
                                 Save
                             </CustomButton>

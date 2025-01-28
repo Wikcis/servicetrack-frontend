@@ -2,8 +2,8 @@ import {FormControl, InputLabel, MenuItem, Select, ThemeProvider} from "@mui/mat
 import {Theme} from "../../utils";
 import {useState} from "react";
 
-export const DropDownList = ({ columns, onSelectColumn, title, className }) => {
-    const [selectedColumn, setSelectedColumn] = useState("");
+export const DropDownList = ({ columns, onSelectColumn, title, className, defaultValue }) => {
+    const [selectedColumn, setSelectedColumn] = useState();
 
     const handleChange = (event) => {
         const value = event.target.value;
@@ -21,6 +21,7 @@ export const DropDownList = ({ columns, onSelectColumn, title, className }) => {
                     value={selectedColumn}
                     label={title}
                     onChange={handleChange}
+                    defaultValue={defaultValue}
                 >
                     {columns.map((item, index) => item !== "" ? (
                         <MenuItem key={index} value={item.accessor}>
