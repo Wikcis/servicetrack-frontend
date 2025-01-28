@@ -2,7 +2,7 @@ import {Logo} from "../../assets";
 import {SidebarData} from "./SidebarData";
 import {useNavigate} from "react-router-dom";
 
-export const Sidebar = () => {
+export const Sidebar = ({withoutData}) => {
 
     const navigate = useNavigate();
 
@@ -12,7 +12,7 @@ export const Sidebar = () => {
                 <Logo/>
             </div>
             <ul className="sidebarList">
-                {SidebarData.map((item, index) => {
+                {!withoutData ? SidebarData.map((item, index) => {
                     return (
                         <li
                             className="row"
@@ -24,7 +24,7 @@ export const Sidebar = () => {
                             <div id="title">{item.title}</div>
                         </li>
                     )
-                })}
+                }):null}
             </ul>
         </div>
     );

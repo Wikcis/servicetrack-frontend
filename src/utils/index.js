@@ -1,2 +1,2 @@
-export * from "./Values";
-export * from "./Functions";
+export * from "./values";
+export * from "./functions";

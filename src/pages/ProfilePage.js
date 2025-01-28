@@ -1,14 +1,22 @@
 import {CustomButton, Sidebar, UserBar} from "../components";
-import React, {useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import "../styles";
 import {Titles} from "../utils";
 import "../components";
 import {TimeRangePopup, ClientSelectionPopup} from "../components";
+import {AppContext} from "../context";
 
 export const ProfilePage = () => {
 
+    const {fetchData} = useContext(AppContext);
+
     const [triggerButtonForTime, setTriggerButtonForTime] = useState(false);
     const [triggerButtonForClient, setTriggerButtonForClient] = useState(false);
+
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     return (
         <div className="app">
@@ -28,6 +36,13 @@ export const ProfilePage = () => {
                     setTriggerButton={setTriggerButtonForClient}
                 >
                     Generate Report for specific Client
+                </CustomButton>
+
+                <CustomButton
+                    className="addButton"
+                    type={Titles.logOutTitle}
+                >
+                    {Titles.logOutTitle}
                 </CustomButton>
 
             </div>

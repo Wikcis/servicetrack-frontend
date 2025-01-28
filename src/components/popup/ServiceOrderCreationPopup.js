@@ -9,11 +9,11 @@ import {EmptyFieldsPopup} from "./EmptyFieldsPopup";
 import {CustomDatepicker} from "../datepicker/CustomDatepicker";
 import dayjs from "dayjs";
 import {CustomTimePicker} from "../timepicker/CustomTimePicker";
-import {ApiContext} from "../../context";
+import {AppContext} from "../../context";
 
 export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => {
 
-    const {refreshServiceOrders, technicians, filteredClients} = useContext(ApiContext);
+    const {refreshServiceOrders, filteredTechnicians, filteredClients} = useContext(AppContext);
 
     const [name, setName] = React.useState("");
     const [technicianName, setTechnicianName] = React.useState("");
@@ -46,7 +46,7 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => 
             return null;
         }
 
-        return {
+        return JSON.stringify({
             id: window.crypto.randomUUID(),
             technicianId: technicianName,
             clientId: name,
@@ -57,7 +57,7 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => 
             status: status,
             serviceDuration: duration,
             comment: comment
-        }
+        });
     }
 
     const formatClients = React.useCallback(() => {
@@ -70,12 +70,12 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => 
 
 
     const formatTechnicians = React.useCallback(() => {
-        const formattedTechnicians = technicians.map(technician => ({
+        const formattedTechnicians = filteredTechnicians.map(technician => ({
             Header: technician.firstName + " " + technician.lastName,
             accessor: technician.id
         }));
         setFormattedTechnicians(formattedTechnicians);
-    }, [technicians]);
+    }, [filteredTechnicians]);
 
 
     useEffect(() => {
@@ -152,6 +152,7 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => 
                                         onSelectedDate={setDate}
                                         minDate={dayjs().add(1, 'day')}
                                         maxDate={dayjs("2035-12-31")}
+                                        defaultValue={dayjs().add(1, 'day')}
                                     />
                                 </div>
                             </div>

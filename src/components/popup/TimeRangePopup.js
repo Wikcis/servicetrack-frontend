@@ -2,15 +2,15 @@ import Popup from "reactjs-popup";
 import {CustomButton} from "../button/CustomButton";
 import {IconXButton} from "../iconButton/IconXButton";
 import React, {useContext, useEffect} from "react";
-import {generateCSVForRange} from "../../utils";
+import {generateCSVForRange, Titles} from "../../utils";
 import {EmptyFieldsPopup} from "./EmptyFieldsPopup";
-import {ApiContext} from "../../context";
+import {AppContext} from "../../context";
 import dayjs from "dayjs";
 import {CustomDatepicker} from "../datepicker/CustomDatepicker";
 
 export const TimeRangePopup = ({triggerButton, setTriggerButton}) => {
 
-    const {serviceOrders} = useContext(ApiContext);
+    const {serviceOrders} = useContext(AppContext);
 
     const [startDate, setStartDate] = React.useState("");
     const [endDate, setEndDate] = React.useState("");
@@ -29,15 +29,12 @@ export const TimeRangePopup = ({triggerButton, setTriggerButton}) => {
     }, [triggerButton]);
 
     const filterData = () => {
-        console.log("temp: 32123123123");
-        const tmp =  serviceOrders.filter((item) => {
+       return serviceOrders.filter((item) => {
             const date = new Date(item.dateTimeOfService);
             return (
                 date >= new Date(startDate) && date <= new Date(endDate)
             );
         });
-        console.log("temp: " + tmp);
-        return tmp;
     };
 
     return (
@@ -91,6 +88,7 @@ export const TimeRangePopup = ({triggerButton, setTriggerButton}) => {
                                 setTriggerButton={setTriggerButton}
                                 generateCSV={generateCSVForRange}
                                 data={filterData}
+                                type={Titles.profileTitle}
                             >
                                 Save
                             </CustomButton>

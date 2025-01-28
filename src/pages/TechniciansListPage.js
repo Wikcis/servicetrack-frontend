@@ -1,14 +1,14 @@
 import {CustomButton, DropDownList, Searchbar, Sidebar, Table, TechnicianCreationPopup, UserBar} from "../components"
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import "../styles"
 import {sortData, Titles} from "../utils";
 import {TableColumns} from "../components";
 import {PlusIcon} from "../assets";
-import {ApiContext} from "../context";
+import {AppContext} from "../context";
 
 export const TechniciansListPage = () => {
 
-    const {filteredTechnicians, setFilteredTechnicians, loading, searchTechnicians} = useContext(ApiContext);
+    const {filteredTechnicians, setFilteredTechnicians, loading, searchTechnicians, fetchData} = useContext(AppContext);
 
     const [triggerButton, setTriggerButton] = useState(false);
 
@@ -17,6 +17,10 @@ export const TechniciansListPage = () => {
     const handleSelection = (columnName) => {
         sortData(columnName, columns, filteredTechnicians, setFilteredTechnicians);
     };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     return (<div className="app">
             <Sidebar/>

@@ -1,9 +1,14 @@
 import React from "react";
 import {Button, ThemeProvider} from "@mui/material";
 import {Theme, Titles} from "../../utils";
-import {addClient, addServiceOrder, addTechnician} from "../../services";
+import {postMethod} from "../../services";
+import {REST_API_URLS, token} from "../../api/apiConstants";
+import {deleteSecureItem} from "../../api/apiFunctions";
+import {useNavigate} from "react-router-dom";
 
-export const CustomButton = ({ children, className, setTriggerButton, icon, requestBody, type, generateCSV = () => [], data = () => [] }) => {
+export const CustomButton = ({ children, className, setTriggerButton, icon, requestBody, type, generateCSV = () => [], data = () => [], credentials = () => []}) => {
+
+    const navigate = useNavigate();
 
     const handleClick = async () => {
 
@@ -16,21 +21,27 @@ export const CustomButton = ({ children, className, setTriggerButton, icon, requ
 
             switch (type) {
                 case Titles.techniciansPageTitle:
-                    addTechnician(requestData);
+                    await postMethod(REST_API_URLS.TECHNICIANS_URL, requestData);
                     break;
                 case Titles.clientsPageTitle:
-                    addClient(requestData);
+                    await postMethod(REST_API_URLS.CLIENTS_URL, requestData);
                     break;
                 case Titles.serviceOrdersPageTitle:
-                    addServiceOrder(requestData);
+                    await postMethod(REST_API_URLS.SERVICEORDERS_URL, requestData);
                     break;
                 default:
                     break;
             }
-        } else if (typeof data === "function") {
+        } else if (type === Titles.profileTitle) {
             const tmp = data();
-
             generateCSV(tmp);
+        } else if (type === Titles.loginTitle || type === Titles.registerTitle) {
+            credentials();
+            return;
+        } else if (type === Titles.logOutTitle) {
+            await deleteSecureItem(token)
+            navigate(REST_API_URLS.ONLY_LOGIN_URL);
+            return;
         }
 
         setTriggerButton((prev) => !prev);

@@ -5,12 +5,12 @@ import React, {useContext, useEffect} from "react";
 import {IconXButton} from "../iconButton/IconXButton";
 import {isAlpha, isNumeric, Titles} from "../../utils";
 import {EmptyFieldsPopup} from "./EmptyFieldsPopup";
-import {ApiContext} from "../../context";
+import {AppContext} from "../../context";
 import {WrongValuePopup} from "./WrongValuePopup";
 
 export const TechnicianCreationPopup = ({triggerButton, setTriggerButton}) => {
 
-    const {refreshTechnicians} = useContext(ApiContext);
+    const {refreshTechnicians} = useContext(AppContext);
 
     const [firstName, setFirstName] = React.useState("");
     const [lastName, setLastName] = React.useState("");
@@ -28,7 +28,7 @@ export const TechnicianCreationPopup = ({triggerButton, setTriggerButton}) => {
 
     const createRequestBody = () => {
 
-        if(!isAlpha(firstName) || !isAlpha(lastName) || !isNumeric(phoneNumber)) {
+        if (!isAlpha(firstName) || !isAlpha(lastName) || !isNumeric(phoneNumber)) {
             setWrongValuesTrigger(true);
             return null;
         }
@@ -38,13 +38,13 @@ export const TechnicianCreationPopup = ({triggerButton, setTriggerButton}) => {
             return null;
         }
 
-        return {
+        return JSON.stringify({
             id: window.crypto.randomUUID(),
             firstName: firstName,
             lastName: lastName,
             email: email,
             phoneNumber: phoneNumber,
-        };
+        });
     }
 
     useEffect(() => {

@@ -1,7 +1,7 @@
 import {createTheme} from "@mui/material";
 import {colors} from "../styles";
 import {TableColumns} from "../components";
-import {Titles} from "./Values";
+import {Titles} from "./values";
 
 export const mapAccessorToHeader = (value, mappingArray) => {
     const match = mappingArray.find(item => item.accessor === value);

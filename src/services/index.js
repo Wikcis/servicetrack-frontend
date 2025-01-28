@@ -1,3 +1,1 @@
-export * from "./TechnicianService";
-export * from "./ClientService";
-export * from "./ServiceOrdersService";
+export * from "./appService";
