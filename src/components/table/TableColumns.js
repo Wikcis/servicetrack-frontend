@@ -1,14 +1,14 @@
 import React, {Fragment} from "react";
-import {CustomCheckbox} from "../checkbox/CustomCheckbox";
 import {EditDeleteIconButtonsContainer} from "../iconButton/EditDeleteIconButtonsContainer";
 import {Titles} from "../../utils";
 
 const checkBoxColumn = {
-    Header: "",
+    Header: "Nr",
     accessor: "checkBox",
-    style: {width: "8%"},
-    Cell: () => <CustomCheckbox/>,
-}
+    style: {width: "5%"},
+    Cell: ({ row }) => row.index + 1,
+};
+
 const phoneNumberColumn = {
     Header: "Phone number",
     accessor: "phoneNumber",
@@ -50,12 +50,8 @@ const createTechniciansColumns = (type) => [
 ];
 
 const createClientColumns = (type) => [
-    {
-        Header: "",
-        accessor: "checkBox",
-        style: {width: "8%"},
-        Cell: () => <CustomCheckbox/>,
-    },
+
+    checkBoxColumn,
     {
         Header: "Name",
         accessor: "name",
@@ -84,6 +80,7 @@ const createClientColumns = (type) => [
 ];
 
 const createServiceOrdersColumns = (type) => [
+    checkBoxColumn,
     {
         Header: "Client Name",
         accessor: "clientName",

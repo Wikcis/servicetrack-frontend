@@ -29,7 +29,7 @@ export const sortData = (columnName, columns, filteredData, setFilteredData) => 
             return parseFloat(valueA) - parseFloat(valueB);
         }
 
-        return String(valueA).localeCompare(String(valueB), undefined, { numeric: true });
+        return String(valueA).localeCompare(String(valueB), undefined, {numeric: true});
     });
 
     setFilteredData(sortedData);
@@ -74,12 +74,12 @@ const mapCSVContent = (orders) => {
 
     const headers = columns.map(column => column.Header);
 
-    headers.shift();
-
     return [
         headers.join(","),
-        ...orders.map(order =>
-            columns.slice(1).map(column => `"${order[column.accessor] || ''}"`).join(",")
+        ...orders.map((order, index) => [
+                index + 1,
+                columns.slice(1).map(column => `"${order[column.accessor] || ''}"`)
+            ].join(",")
         )
     ].join('\n');
 }

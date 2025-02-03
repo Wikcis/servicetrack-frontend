@@ -9,7 +9,7 @@ import {DropDownList} from "../dropDownList/DropDownList";
 
 export const ClientSelectionPopup = ({triggerButton, setTriggerButton}) => {
 
-    const {serviceOrders, filteredClients} = useContext(AppContext);
+    const {filteredServiceOrders, filteredClients} = useContext(AppContext);
     
     const [formattedClients, setFormattedClients] = React.useState([]);
     const [selectedClient, setSelectedClient] = React.useState([]);
@@ -31,7 +31,7 @@ export const ClientSelectionPopup = ({triggerButton, setTriggerButton}) => {
 
         const clientToCompare = filteredClients.find((item) => item.id === selectedClient);
 
-        return serviceOrders.filter((order) => order.clientName === clientToCompare.name);
+        return filteredServiceOrders.filter((order) => order.clientName === clientToCompare.name);
     };
 
     const formatClients = React.useCallback(() => {

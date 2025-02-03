@@ -20,16 +20,33 @@
     align-items: center;
     cursor: pointer;
     padding: 10px 0;
+    position: relative;
 }
 
 .sidebarList .row:hover {
+    position: relative;
     background-color: var(--secondary);
+    border-radius: 70px;
+    margin: 5%;
+}
+.sidebarList .row:hover #icon,
+.sidebarList .row:hover #title {
+    z-index: 1;
+    font-weight: bold;
 }
 
-.sidebarList #active {
-    background-color: var(--secondary);
+.sidebarList .row.active {
+    position: relative;
+    background-color: var(--background);
+    border-radius: 70px;
+    margin: 5%;
 }
-
+.sidebarList .row.active #icon,
+.sidebarList .row.active #title {
+    z-index: 1;
+    color: var(--primary);
+    font-weight: bold;
+}
 .row #icon {
     display: grid;
     place-items: center;

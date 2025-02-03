@@ -10,7 +10,7 @@ import {CustomDatepicker} from "../datepicker/CustomDatepicker";
 
 export const TimeRangePopup = ({triggerButton, setTriggerButton}) => {
 
-    const {serviceOrders} = useContext(AppContext);
+    const {filteredServiceOrders} = useContext(AppContext);
 
     const [startDate, setStartDate] = React.useState("");
     const [endDate, setEndDate] = React.useState("");
@@ -29,7 +29,8 @@ export const TimeRangePopup = ({triggerButton, setTriggerButton}) => {
     }, [triggerButton]);
 
     const filterData = () => {
-       return serviceOrders.filter((item) => {
+
+       return filteredServiceOrders.filter((item) => {
             const date = new Date(item.dateTimeOfService);
             return (
                 date >= new Date(startDate) && date <= new Date(endDate)
