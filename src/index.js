@@ -1,22 +1,39 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
+import { useNavigate } from 'react-router-dom';
 
 import 'bootstrap/dist/css/bootstrap.css';
-import {createBrowserRouter, RouterProvider} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import {
     NotFoundPage,
     TechniciansListPage,
     ClientsListPage,
-    ServiceOrdersPage, ProfilePage, LoginPage, RegistrationPage
+    ServiceOrdersPage,
+    UserServiceOrdersPage,
+    ProfilePage,
+    LoginPage,
+    RegistrationPage
 } from "./pages";
-import {ApiContextProvider, REST_API_URLS} from "./context";
-import {ProtectedRoute} from "./components";
+import { ApiContextProvider, REST_API_URLS } from "./context";
+import { ProtectedRoute } from "./components";
+
+const RedirectOnRefreshWrapper = ({ children }) => {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        navigate('/');
+    }, [navigate]);
+
+    return children;
+};
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: (
-            <ProtectedRoute element={<TechniciansListPage />} />
+            <RedirectOnRefreshWrapper>
+                <ProtectedRoute element={<LoginPage />} />
+            </RedirectOnRefreshWrapper>
         ),
         errorElement: <NotFoundPage />,
     },
@@ -39,6 +56,12 @@ const router = createBrowserRouter([
         ),
     },
     {
+        path: REST_API_URLS.ONLY_USER_SERVICEORDERS_URL,
+        element: (
+            <ProtectedRoute element={<UserServiceOrdersPage />} />
+        ),
+    },
+    {
         path: REST_API_URLS.ONLY_PROFILE_URL,
         element: (
             <ProtectedRoute element={<ProfilePage />} />
@@ -57,6 +80,6 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <ApiContextProvider>
-        <RouterProvider router={router}/>
+        <RouterProvider router={router} />
     </ApiContextProvider>
 );

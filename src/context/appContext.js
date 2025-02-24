@@ -8,15 +8,31 @@ export const AppContext = createContext();
 export const ApiContextProvider = ({children}) => {
 
     const [dataFetched, setDataFetched] = useState(false);
+    const [userFetched, setUserFetched] = useState(false);
+
+    const [loggedIn, setLoggedIn] = React.useState(false);
+    const [register, setRegister] = React.useState(false);
+
 
     const [clients, setClients] = useState([]);
     const [serviceOrders, setServiceOrders] = useState([]);
     const [technicians, setTechnicians] = useState([]);
-    const [user, setUser] = useState([]);
+    const [user, setUser] = useState({
+        email: "",
+        firstName: "",
+        id: "",
+        lastName: "",
+        phoneNumber: "",
+        role: ""
+    });
 
     const [filteredClients, setFilteredClients] = useState([]);
     const [filteredTechnicians, setFilteredTechnicians] = useState([]);
     const [filteredServiceOrders, setFilteredServiceOrders] = useState([]);
+    const [filteredUserServiceOrders, setFilteredUserServiceOrders] = useState([]);
+
+    const [editionTrigger, setEditionTrigger] = useState(false);
+    const [selectedRow, setSelectedRow] = useState(null);
 
     const [loading, setLoading] = useState(true);
 
@@ -44,7 +60,7 @@ export const ApiContextProvider = ({children}) => {
         try {
             techniciansResponse = await getMethod(REST_API_URLS.TECHNICIANS_URL);
 
-            if(techniciansResponse) {
+            if (techniciansResponse) {
                 setTechnicians(techniciansResponse.technicians);
                 setFilteredTechnicians(techniciansResponse.technicians);
             }
@@ -63,10 +79,9 @@ export const ApiContextProvider = ({children}) => {
         try {
             ordersResponse = await getMethod(REST_API_URLS.SERVICEORDERS_URL);
 
-            if(ordersResponse) {
+            if (ordersResponse) {
                 setServiceOrders(ordersResponse.serviceOrders);
                 setFilteredServiceOrders(ordersResponse.serviceOrders);
-
             }
 
             return ordersResponse;
@@ -76,6 +91,28 @@ export const ApiContextProvider = ({children}) => {
 
         return ordersResponse;
     }, []);
+
+    const fetchUser = async () => {
+        if (userFetched) return;
+        let userResponse = {data: {users: []}};
+
+        setLoading(true);
+
+        try {
+            userResponse = await getMethod(REST_API_URLS.USERS_ME_URL);
+
+            if (userResponse) {
+                setUser(userResponse);
+            }
+
+            setUserFetched(true);
+            return userResponse;
+        } catch (err) {
+            console.error("Error refreshing users:", err);
+        }finally {
+            setLoading(false);
+        }
+    };
 
     const createClientsWithAdditionalData = useCallback((clientsToMap, serviceOrdersToMap) => {
 
@@ -131,7 +168,7 @@ export const ApiContextProvider = ({children}) => {
         setFilteredServiceOrders(mappedOrders);
     }, []);
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         if (dataFetched) return;
 
         setLoading(true);
@@ -142,33 +179,17 @@ export const ApiContextProvider = ({children}) => {
             const serviceOrdersResponse = await fetchServiceOrders();
 
             if (clientsResponse && serviceOrdersResponse) {
-                const updatedClients = createClientsWithAdditionalData(
-                    clientsResponse.clients,
-                    serviceOrdersResponse.serviceOrders
-                );
-                const updatedServiceOrders = createServiceOrdersWithAdditionalData(
-                    clientsResponse.clients,
-                    serviceOrdersResponse.serviceOrders
-                );
+
+                createClientsWithAdditionalData(clientsResponse.clients, serviceOrdersResponse.serviceOrders);
+                createServiceOrdersWithAdditionalData(clientsResponse.clients, serviceOrdersResponse.serviceOrders);
 
                 if (techniciansResponse && serviceOrdersResponse) {
-                    const updatedTechnicians = createTechniciansWithAdditionalData(
-                        techniciansResponse.technicians,
-                        serviceOrdersResponse.serviceOrders
-                    );
-                    setTechnicians(updatedTechnicians);
+                    createTechniciansWithAdditionalData(techniciansResponse.technicians, serviceOrdersResponse.serviceOrders);
                 }
-
-                setClients(updatedClients);
-                setServiceOrders(updatedServiceOrders);
             }
 
             if (techniciansResponse && serviceOrdersResponse) {
-                const updatedTechnicians = createTechniciansWithAdditionalData(
-                    techniciansResponse.technicians,
-                    serviceOrdersResponse.serviceOrders
-                );
-                setTechnicians(updatedTechnicians);
+                createTechniciansWithAdditionalData(techniciansResponse.technicians, serviceOrdersResponse.serviceOrders);
             }
 
             setDataFetched(true);
@@ -177,36 +198,15 @@ export const ApiContextProvider = ({children}) => {
         } finally {
             setLoading(false);
         }
-    };
+    },[]);
 
-    const refreshClients = useCallback(async () => {
-        const clientsResponse = await fetchClients();
-
-        createClientsWithAdditionalData(clientsResponse.clients, serviceOrders);
-    }, [fetchClients]);
-
-    const refreshTechnicians = useCallback(async () => {
-        const techniciansResponse = await fetchTechnicians();
-
-        createTechniciansWithAdditionalData(techniciansResponse.technicians, serviceOrders);
-    }, [fetchTechnicians]);
-
-    const refreshServiceOrders = useCallback(async () => {
-        const clientsResponse = await fetchClients();
-        const ordersResponse = await fetchServiceOrders();
-
-        createServiceOrdersWithAdditionalData(clientsResponse.clients, ordersResponse.serviceOrders);
-
-    }, [fetchServiceOrders]);
+    const refreshData = useCallback (async () => {
+        setDataFetched(false);
+        await fetchData();
+    }, [fetchData]);
 
     const searchClients = useCallback((input) => {
-
         const search = input?.trim().toLowerCase() || "";
-
-        if (search === "") {
-            setFilteredClients(clients);
-            return;
-        }
 
         const filtered = clients.filter((client) => {
             return (
@@ -220,15 +220,9 @@ export const ApiContextProvider = ({children}) => {
         setFilteredClients(filtered);
     }, [clients]);
 
-
     const searchTechnicians = useCallback((input) => {
 
         const search = input?.trim().toLowerCase() || "";
-
-        if (search === "") {
-            setFilteredTechnicians(technicians);
-            return;
-        }
 
         const filtered = technicians.filter((technician) => {
             return (
@@ -244,14 +238,15 @@ export const ApiContextProvider = ({children}) => {
 
     const searchServiceOrders = useCallback((input) => {
 
+        const filtered = filterServiceOrders(serviceOrders, input);
+
+        setFilteredServiceOrders(filtered);
+    }, [serviceOrders]);
+
+    const filterServiceOrders = (orders, input) => {
         const search = input?.trim().toLowerCase() || "";
 
-        if (search === "") {
-            setFilteredServiceOrders(serviceOrders);
-            return;
-        }
-
-        const filtered = serviceOrders.filter((serviceOrder) => {
+        return orders.filter((serviceOrder) => {
             return (
                 serviceOrder.clientName?.toLowerCase().includes(search) ||
                 serviceOrder.serviceType?.toLowerCase().includes(search) ||
@@ -261,48 +256,38 @@ export const ApiContextProvider = ({children}) => {
                 serviceOrder.serviceDuration?.toLowerCase().includes(search)
             );
         });
-
-        setFilteredServiceOrders(filtered);
-    }, [serviceOrders]);
-
-    const fetchUser = useCallback(async () => {
-        let userResponse = {data: {users: []}};
-
-        try {
-            userResponse = await getMethod(REST_API_URLS.USERS_ME_URL);
-            if(userResponse) {
-                setUser(userResponse);
-            }
-            return userResponse;
-        } catch (err) {
-            console.error("Error refreshing users:", err);
-        }
-
-        return userResponse;
-    }, []);
+    }
 
     return (
         <AppContext.Provider
             value={{
                 clients,
-                refreshClients,
                 filteredClients,
                 setFilteredClients,
                 technicians,
-                refreshTechnicians,
                 filteredTechnicians,
                 setFilteredTechnicians,
                 serviceOrders,
-                refreshServiceOrders,
                 filteredServiceOrders,
+                filteredUserServiceOrders,
                 setFilteredServiceOrders,
+                setFilteredUserServiceOrders,
                 searchClients,
                 searchTechnicians,
                 searchServiceOrders,
                 loading,
                 fetchData,
                 fetchUser,
-                user
+                refreshData,
+                user,
+                editionTrigger,
+                setEditionTrigger,
+                selectedRow,
+                setSelectedRow,
+                register,
+                setRegister,
+                loggedIn,
+                setLoggedIn
             }}
         >
             {children}

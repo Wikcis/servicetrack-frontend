@@ -1,32 +1,37 @@
 import Popup from "reactjs-popup";
-import {CustomTextField} from "../textField/CustomTextField";
-import {CustomButton} from "../button/CustomButton";
-import {IconXButton} from "../iconButton/IconXButton";
-import React, {useContext, useEffect} from "react";
-import {isAlpha, isNumeric, Titles} from "../../utils";
-import {EmptyFieldsPopup} from "./EmptyFieldsPopup";
-import {AppContext} from "../../context";
-import {WrongValuePopup} from "./WrongValuePopup";
+import {CustomTextField} from "../../textField/CustomTextField";
+import {CustomButton} from "../../button/CustomButton";
+import {IconXButton} from "../../iconButton/IconXButton";
+import React, {useContext} from "react";
+import {isNumeric, Titles} from "../../../utils";
+import {EmptyFieldsPopup} from "../errorPopup/EmptyFieldsPopup";
+import {AppContext} from "../../../context";
+import {WrongValuePopup} from "../errorPopup/WrongValuePopup";
 
-export const ClientCreationPopup = ({triggerButton, setTriggerButton}) => {
+export const ClientEditionPopup = ({triggerButton, setTriggerButton, row}) => {
 
-    const {refreshClients} = useContext(AppContext);
+    const {refreshData} = useContext(AppContext);
 
+    const [id, setId] = React.useState("");
     const [name, setName] = React.useState("");
     const [email, setEmail] = React.useState("");
     const [phoneNumber, setPhoneNumber] = React.useState("");
     const [emptyWarningTrigger, setEmptyWarningTrigger] = React.useState(false);
     const [wrongValuesTrigger, setWrongValuesTrigger] = React.useState(false);
+    const [validate, setValidate] = React.useState(false);
 
-    const clearValues = () => {
-        setName("");
-        setEmail("");
-        setPhoneNumber("");
-    };
+    React.useEffect(() => {
+        if (row) {
+            setId(row.original.id || "");
+            setName(row.original.name || "");
+            setEmail(row.original.email || "");
+            setPhoneNumber(row.original.phoneNumber || "");
+        }
+    }, [row]);
 
     const createRequestBody = () => {
 
-        if(!isAlpha(name) || !isNumeric(phoneNumber)) {
+        if(!isNumeric(phoneNumber)) {
             setWrongValuesTrigger(true);
             return null;
         }
@@ -37,18 +42,12 @@ export const ClientCreationPopup = ({triggerButton, setTriggerButton}) => {
         }
 
         return JSON.stringify({
-            id: window.crypto.randomUUID(),
+            id: id,
             name: name,
             email: email,
             phoneNumber: phoneNumber
         });
     };
-
-    useEffect(() => {
-        if (triggerButton) {
-            clearValues();
-        }
-    }, [triggerButton]);
 
     return (
         <div>
@@ -58,15 +57,14 @@ export const ClientCreationPopup = ({triggerButton, setTriggerButton}) => {
                 nested
                 closeOnDocumentClick={false}
                 onClose={() => {
-                    clearValues();
-                    refreshClients();
+                    refreshData();
                 }}
             >
                 <div className="popupOverlay">
                     <div className="singleColumnPopUpContainer">
 
                         <div className="popupHeader">
-                            <h3 className="popupTitle">Add New Client</h3>
+                            <h3 className="popupTitle">Edit Client</h3>
                             <IconXButton className="closeButton" setTriggerButton={setTriggerButton}/>
                         </div>
 
@@ -79,7 +77,9 @@ export const ClientCreationPopup = ({triggerButton, setTriggerButton}) => {
                                         label={"Name"}
                                         setText={setName}
                                         maxLength={32}
-                                        alpha={true}
+                                        value={name}
+                                        required={true}
+                                        validate={validate}
                                     />
                                 </span>
                             </div>
@@ -91,6 +91,9 @@ export const ClientCreationPopup = ({triggerButton, setTriggerButton}) => {
                                         label={"Email"}
                                         setText={setEmail}
                                         maxLength={32}
+                                        email={true}
+                                        disabled={true}
+                                        value={email}
                                     />
                                 </span>
                             </div>
@@ -102,7 +105,11 @@ export const ClientCreationPopup = ({triggerButton, setTriggerButton}) => {
                                         label={"Phone number"}
                                         setText={setPhoneNumber}
                                         maxLength={9}
+                                        minLength={9}
                                         numeric={true}
+                                        value={phoneNumber}
+                                        required={true}
+                                        validate={validate}
                                     />
                                 </span>
 
@@ -115,8 +122,9 @@ export const ClientCreationPopup = ({triggerButton, setTriggerButton}) => {
                                 setTriggerButton={setTriggerButton}
                                 requestBody={createRequestBody}
                                 type={Titles.clientsPageTitle}
+                                validate={setValidate}
                             >
-                                Save
+                                Update
                             </CustomButton>
                         </div>
 

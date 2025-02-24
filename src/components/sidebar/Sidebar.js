@@ -1,11 +1,16 @@
 import {Logo} from "../../assets";
 import {SidebarData} from "./SidebarData";
 import {useNavigate} from "react-router-dom";
+import {useContext} from "react";
+import {AppContext} from "../../context";
 
 export const Sidebar = ({withoutData}) => {
 
+    const {user} = useContext(AppContext);
+
     const navigate = useNavigate();
     const currentPath = window.location.pathname;
+
     return (
         <div className="sidebar">
             <div className="logoContainer">
@@ -13,7 +18,7 @@ export const Sidebar = ({withoutData}) => {
             </div>
             <ul className="sidebarList">
                 {!withoutData
-                    ? SidebarData.map((item, index) => {
+                    ? SidebarData(user?.role).map((item, index) => {
                         const isActive = currentPath === item.link;
 
                         return (

@@ -32,5 +32,6 @@ export const ProtectedRoute = ({ element }) => {
     if (!isAuthenticated) {
         return <Navigate to={REST_API_URLS.ONLY_REGISTRATION_URL} replace />;
     }
+
     return element;
 };

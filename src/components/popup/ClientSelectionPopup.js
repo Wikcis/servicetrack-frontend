@@ -3,13 +3,13 @@ import {CustomButton} from "../button/CustomButton";
 import {IconXButton} from "../iconButton/IconXButton";
 import React, {useContext, useEffect} from "react";
 import {generateCSVForClient, Titles} from "../../utils";
-import {EmptyFieldsPopup} from "./EmptyFieldsPopup";
+import {EmptyFieldsPopup} from "./errorPopup/EmptyFieldsPopup";
 import {AppContext} from "../../context";
 import {DropDownList} from "../dropDownList/DropDownList";
 
 export const ClientSelectionPopup = ({triggerButton, setTriggerButton}) => {
 
-    const {filteredServiceOrders, filteredClients} = useContext(AppContext);
+    const {filteredServiceOrders, filteredClients, filteredUserServiceOrders, user} = useContext(AppContext);
     
     const [formattedClients, setFormattedClients] = React.useState([]);
     const [selectedClient, setSelectedClient] = React.useState([]);
@@ -81,6 +81,7 @@ export const ClientSelectionPopup = ({triggerButton, setTriggerButton}) => {
                                 setTriggerButton={setTriggerButton}
                                 generateCSV={generateCSVForClient}
                                 data={filterData}
+                                user={user}
                                 type={Titles.profileTitle}
                             >
                                 Save

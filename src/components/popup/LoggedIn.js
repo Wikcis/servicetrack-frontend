@@ -1,8 +1,8 @@
 import Popup from "reactjs-popup";
-import {IconXButton} from "../iconButton/IconXButton";
+import {IconXButton} from "../iconButton/IconXButton"
 import React from "react";
 
-export const EmptyFieldsPopup = ({triggerButton, setTriggerButton}) => {
+export const LoggedIn = ({triggerButton, setTriggerButton}) => {
 
     return (
         <div>
@@ -15,13 +15,12 @@ export const EmptyFieldsPopup = ({triggerButton, setTriggerButton}) => {
                 <div className="emptyFieldsPopupOverlay">
                     <div className="emptyFieldsPopupContainer">
                         <div className="popupHeader">
-                            <h3 className="emptyFieldsPopupTitle">Empty values</h3>
+                            <h3 className="success">Success</h3>
                             <IconXButton className="closeButton" setTriggerButton={setTriggerButton}/>
                         </div>
 
                         <span className="emptyFieldsLabelField">
-                            Some fields are empty. <br/>
-                            Fill them to add an object.
+                            You are successfully logged in
                         </span>
 
                     </div>

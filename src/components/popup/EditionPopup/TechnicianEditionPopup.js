@@ -1,30 +1,35 @@
 import Popup from "reactjs-popup";
-import {CustomTextField} from "../textField/CustomTextField";
-import {CustomButton} from "../button/CustomButton";
-import React, {useContext, useEffect} from "react";
-import {IconXButton} from "../iconButton/IconXButton";
-import {isAlpha, isNumeric, Titles} from "../../utils";
-import {EmptyFieldsPopup} from "./EmptyFieldsPopup";
-import {AppContext} from "../../context";
-import {WrongValuePopup} from "./WrongValuePopup";
+import {CustomTextField} from "../../textField/CustomTextField";
+import {CustomButton} from "../../button/CustomButton";
+import React, {useContext} from "react";
+import {IconXButton} from "../../iconButton/IconXButton";
+import {isAlpha, isNumeric, Titles} from "../../../utils";
+import {EmptyFieldsPopup} from "../errorPopup/EmptyFieldsPopup";
+import {AppContext} from "../../../context";
+import {WrongValuePopup} from "../errorPopup/WrongValuePopup";
 
-export const TechnicianCreationPopup = ({triggerButton, setTriggerButton}) => {
+export const TechnicianEditionPopup = ({triggerButton, setTriggerButton, row}) => {
 
-    const {refreshTechnicians} = useContext(AppContext);
+    const {refreshData} = useContext(AppContext);
 
+    const [id, setId] = React.useState("");
     const [firstName, setFirstName] = React.useState("");
     const [lastName, setLastName] = React.useState("");
     const [email, setEmail] = React.useState("");
     const [phoneNumber, setPhoneNumber] = React.useState("");
     const [emptyWarningTrigger, setEmptyWarningTrigger] = React.useState(false);
     const [wrongValuesTrigger, setWrongValuesTrigger] = React.useState(false);
+    const [validate, setValidate] = React.useState(false);
 
-    const clearValues = () => {
-        setFirstName("");
-        setLastName("");
-        setEmail("");
-        setPhoneNumber("");
-    };
+    React.useEffect(() => {
+        if (row) {
+            setId(row.original.id || "");
+            setFirstName(row.original.firstName || "");
+            setLastName(row.original.lastName || "");
+            setEmail(row.original.email || "");
+            setPhoneNumber(row.original.phoneNumber || "");
+        }
+    }, [row]);
 
     const createRequestBody = () => {
 
@@ -39,20 +44,13 @@ export const TechnicianCreationPopup = ({triggerButton, setTriggerButton}) => {
         }
 
         return JSON.stringify({
-            id: window.crypto.randomUUID(),
+            id: id,
             firstName: firstName,
             lastName: lastName,
             email: email,
             phoneNumber: phoneNumber,
         });
     }
-
-    useEffect(() => {
-        if (triggerButton) {
-            clearValues();
-        }
-    }, [triggerButton]);
-
 
     return (
         <div>
@@ -62,15 +60,14 @@ export const TechnicianCreationPopup = ({triggerButton, setTriggerButton}) => {
                 nested
                 closeOnDocumentClick={false}
                 onClose={() => {
-                    clearValues();
-                    refreshTechnicians();
+                    refreshData();
                 }}
             >
                 <div className="popupOverlay">
                     <div className="singleColumnPopUpContainer">
 
                         <div className="popupHeader">
-                            <h3 className="popupTitle">Add New Technician</h3>
+                            <h3 className="popupTitle">Edit Technician</h3>
                             <IconXButton className="closeButton" setTriggerButton={setTriggerButton}/>
                         </div>
 
@@ -80,9 +77,12 @@ export const TechnicianCreationPopup = ({triggerButton, setTriggerButton}) => {
                                 <span className="textField">
                                     <CustomTextField
                                         label={"First Name"}
+                                        value={firstName}
                                         setText={setFirstName}
                                         maxLength={24}
                                         alpha={true}
+                                        required={true}
+                                        validate={validate}
                                     />
                                 </span>
 
@@ -93,9 +93,12 @@ export const TechnicianCreationPopup = ({triggerButton, setTriggerButton}) => {
                                 <span className="textField">
                                     <CustomTextField
                                         label={"Last Name"}
+                                        value={lastName}
                                         setText={setLastName}
                                         maxLength={32}
                                         alpha={true}
+                                        required={true}
+                                        validate={validate}
                                     />
                                 </span>
                             </div>
@@ -106,8 +109,12 @@ export const TechnicianCreationPopup = ({triggerButton, setTriggerButton}) => {
                                 <span className="textField">
                                     <CustomTextField
                                         label={"Email"}
+                                        value={email}
                                         setText={setEmail}
                                         maxLength={32}
+                                        email={true}
+                                        disabled={true}
+                                        required={true}
                                     />
                                 </span>
                             </div>
@@ -117,9 +124,13 @@ export const TechnicianCreationPopup = ({triggerButton, setTriggerButton}) => {
                                 <span className="textField">
                                     <CustomTextField
                                         label={"Phone number"}
+                                        value={phoneNumber}
                                         setText={setPhoneNumber}
                                         maxLength={9}
+                                        minLength={9}
                                         numeric={true}
+                                        required={true}
+                                        validate={validate}
                                     />
                                 </span>
                             </div>
@@ -131,8 +142,9 @@ export const TechnicianCreationPopup = ({triggerButton, setTriggerButton}) => {
                                 setTriggerButton={setTriggerButton}
                                 requestBody={createRequestBody}
                                 type={Titles.techniciansPageTitle}
+                                validate={setValidate}
                             >
-                                Save
+                                Update
                             </CustomButton>
                         </div>
 

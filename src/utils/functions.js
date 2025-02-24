@@ -2,11 +2,43 @@ import {createTheme} from "@mui/material";
 import {colors} from "../styles";
 import {TableColumns} from "../components";
 import {Titles} from "./values";
+import {deleteSecureItem} from "../api/apiFunctions";
+import {token} from "../api/apiConstants";
 
 export const mapAccessorToHeader = (value, mappingArray) => {
     const match = mappingArray.find(item => item.accessor === value);
     return match ? match.Header : value;
 };
+
+const clearCookies = () => {
+    document.cookie.split(";").forEach((cookie) => {
+        document.cookie = cookie
+            .replace(/^ +/, "")
+            .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
+    });
+};
+
+const clearStorage = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+};
+
+const clearCache = async () => {
+    if ("caches" in window) {
+        const cacheNames = await caches.keys();
+        for (const cacheName of cacheNames) {
+            await caches.delete(cacheName);
+        }
+    }
+};
+
+export const logout = async () => {
+    await deleteSecureItem(token);
+    clearCookies();
+    clearStorage();
+    await clearCache();
+};
+
 
 export const sortData = (columnName, columns, filteredData, setFilteredData) => {
 
@@ -69,14 +101,16 @@ const generateCSV = (csvContent, filename) => {
     document.body.removeChild(link);
 };
 
-const mapCSVContent = (orders) => {
-    const columns = TableColumns(Titles.serviceOrdersPageTitle);
+const mapCSVContent = (orders, user) => {
+    const columns = TableColumns(Titles.serviceOrdersPageTitle, user);
 
     const headers = columns.map(column => column.Header);
 
+    const userOrders = user.role === "USER" ? orders.filter(order => order.technicianId === user.id) : orders
+
     return [
         headers.join(","),
-        ...orders.map((order, index) => [
+        ...userOrders.map((order, index) => [
                 index + 1,
                 columns.slice(1).map(column => `"${order[column.accessor] || ''}"`)
             ].join(",")
@@ -84,16 +118,15 @@ const mapCSVContent = (orders) => {
     ].join('\n');
 }
 
-export const generateCSVForRange = (orders) => {
-
-    const content = mapCSVContent(orders)
+export const generateCSVForRange = (orders, user) => {
+    const content = mapCSVContent(orders, user)
 
     generateCSV(content, "serviceOrdersInRange.csv");
 };
 
-export const generateCSVForClient = (orders) => {
+export const generateCSVForClient = (orders, user) => {
 
-    const content = mapCSVContent(orders)
+    const content = mapCSVContent(orders, user)
 
     generateCSV(content, "serviceOrdersForClient.csv");
 };
@@ -106,3 +139,6 @@ export const isAlpha = (inputValue) => {
     return /^[a-zA-Z]*$/.test(inputValue);
 }
 
+export const isValidEmail = (inputValue) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputValue);
+}

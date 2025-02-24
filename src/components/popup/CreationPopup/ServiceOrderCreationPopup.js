@@ -1,19 +1,19 @@
 import Popup from "reactjs-popup";
-import {CustomTextField} from "../textField/CustomTextField";
-import {CustomButton} from "../button/CustomButton";
+import {CustomTextField} from "../../textField/CustomTextField";
+import {CustomButton} from "../../button/CustomButton";
 import React, {useContext, useEffect} from "react";
-import {IconXButton} from "../iconButton/IconXButton";
-import {DropDownList} from "../dropDownList/DropDownList";
-import {Format, Status, Titles, Type} from "../../utils";
-import {EmptyFieldsPopup} from "./EmptyFieldsPopup";
-import {CustomDatepicker} from "../datepicker/CustomDatepicker";
+import {IconXButton} from "../../iconButton/IconXButton";
+import {DropDownList} from "../../dropDownList/DropDownList";
+import {Format, Status, Titles, Type} from "../../../utils";
+import {EmptyFieldsPopup} from "../errorPopup/EmptyFieldsPopup";
+import {CustomDatepicker} from "../../datepicker/CustomDatepicker";
 import dayjs from "dayjs";
-import {CustomTimePicker} from "../timepicker/CustomTimePicker";
-import {AppContext} from "../../context";
+import {CustomTimePicker} from "../../timepicker/CustomTimePicker";
+import {AppContext} from "../../../context";
 
 export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => {
 
-    const {refreshServiceOrders, filteredTechnicians, filteredClients} = useContext(AppContext);
+    const {refreshData, filteredTechnicians, filteredClients, user} = useContext(AppContext);
 
     const [name, setName] = React.useState("");
     const [technicianName, setTechnicianName] = React.useState("");
@@ -28,6 +28,9 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => 
     const [formattedClients, setFormattedClients] = React.useState([])
     const [formattedTechnicians, setFormattedTechnicians] = React.useState([])
 
+    const [validate, setValidate] = React.useState(false);
+
+
     const clearValues = () => {
         setName("");
         setTechnicianName("")
@@ -39,16 +42,15 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => 
     };
 
     const createRequestBody = () => {
-        console.log(type + " " + format + " " + description + " " + status + " " + name);
 
-        if (name === "" || description === "") {
+        if (name === "" || status === "" || (user.role !== "USER" ? technicianName === "" : false) || date === "" || type === "" || format === "") {
             setEmptyWarningTrigger(true);
             return null;
         }
 
-        return JSON.stringify({
+        const obj = JSON.stringify({
             id: window.crypto.randomUUID(),
-            technicianId: technicianName,
+            technicianId: user.role === "USER" ? user.id : technicianName,
             clientId: name,
             serviceType: type,
             serviceFormat: format,
@@ -58,6 +60,10 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => 
             serviceDuration: duration,
             comment: comment
         });
+
+        console.log("Service Order posting:" + obj);
+
+        return obj
     }
 
     const formatClients = React.useCallback(() => {
@@ -83,8 +89,12 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => 
             clearValues();
             formatClients();
             formatTechnicians();
+            setStatus("PLANNED");
+            setDate(dayjs().add(1, 'day'))
         }
     }, [formatClients, formatTechnicians, triggerButton]);
+
+    console.log("status: ", status)
 
     return (
         <div>
@@ -95,9 +105,8 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => 
                 closeOnDocumentClick={false}
                 onClose={() => {
                     clearValues();
-                    refreshServiceOrders();
+                    refreshData();
                 }}
-
             >
                 <div className="popupOverlay">
                     <div className="popUpContainer">
@@ -110,25 +119,29 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => 
                         <div className="gridContainer">
 
                             <div className="rowContainer">
-                                <div className="gridItem">
+                                <div className={user.role === "USER" ? "singleItem" : "gridItem"}>
                                     <span className="labelField">Enter client name</span>
                                     <DropDownList
                                         columns={formattedClients}
                                         onSelectColumn={setName}
                                         title={Titles.clientNameTitle}
                                         className={"popUpDropDownListContainer"}
+                                        required={true}
+                                        validate={validate}
                                     />
                                 </div>
 
-                                <div className="gridItem">
+                                {user.role !== "USER" ?<div className="gridItem">
                                     <span className="labelField">Enter Technician name</span>
                                     <DropDownList
                                         columns={formattedTechnicians}
                                         onSelectColumn={setTechnicianName}
                                         title={Titles.technicianNameTitle}
                                         className={"popUpDropDownListContainer"}
+                                        required={true}
+                                        validate={validate}
                                     />
-                                </div>
+                                </div> : null}
 
                             </div>
 
@@ -141,6 +154,9 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => 
                                         onSelectColumn={setStatus}
                                         title={Titles.serviceStatusTitle}
                                         className={"popUpDropDownListContainer"}
+                                        value={status}
+                                        required={true}
+                                        validate={validate}
                                     />
                                 </div>
 
@@ -150,9 +166,9 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => 
                                         className="popUpDatepicker"
                                         title="Date of service"
                                         onSelectedDate={setDate}
-                                        minDate={dayjs().add(1, 'day')}
-                                        maxDate={dayjs("2035-12-31")}
-                                        defaultValue={dayjs().add(1, 'day')}
+                                        minDate={status === "DONE" ? dayjs("2020-12-31") : dayjs()}
+                                        maxDate={status === "DONE" ? dayjs() : dayjs("2035-12-31")}
+                                        value={dayjs()}
                                     />
                                 </div>
                             </div>
@@ -165,6 +181,8 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => 
                                         onSelectColumn={setType}
                                         title={Titles.serviceTypeTitle}
                                         className={"popUpDropDownListContainer"}
+                                        required={true}
+                                        validate={validate}
                                     />
                                 </div>
 
@@ -175,6 +193,8 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => 
                                         onSelectColumn={setFormat}
                                         title={Titles.serviceFormatTitle}
                                         className={"popUpDropDownListContainer"}
+                                        required={true}
+                                        validate={validate}
                                     />
                                 </div>
                             </div>
@@ -221,6 +241,7 @@ export const ServiceOrderCreationPopup = ({triggerButton, setTriggerButton}) => 
                                 className="saveButton"
                                 setTriggerButton={setTriggerButton}
                                 requestBody={createRequestBody}
+                                validate={setValidate}
                                 type={Titles.serviceOrdersPageTitle}
                             >
                                 Save

@@ -1,9 +1,9 @@
-import {ClientSelectionPopup, CustomButton, Sidebar, TimeRangePopup, UserBar} from "../components";
+import {ClientSelectionPopup, CustomButton, Sidebar, TimeRangePopup, UserBar} from "../../components";
 import React, {useContext, useEffect, useState} from "react";
-import "../styles";
-import {Titles} from "../utils";
-import "../components";
-import {AppContext} from "../context";
+import "../../styles";
+import {Titles} from "../../utils";
+import "../../components";
+import {AppContext} from "../../context";
 
 export const ProfilePage = () => {
 

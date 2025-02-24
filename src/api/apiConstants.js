@@ -1,4 +1,4 @@
-const BASE_URL = "https://servicetrack-backend-k6ux.onrender.com";
+const BASE_URL = "https://servicetrack-backend-1.onrender.com";
 
 export const REST_API_URLS = {
     BASE_URL,
@@ -7,6 +7,7 @@ export const REST_API_URLS = {
     ONLY_TECHNICIANS_URL: "/technicians",
     ONLY_CLIENTS_URL: "/clients",
     ONLY_SERVICEORDERS_URL: "/serviceorders",
+    ONLY_USER_SERVICEORDERS_URL: "/yourServiceorders",
     ONLY_PROFILE_URL: "/profile",
     TECHNICIANS_URL: `${BASE_URL}/technicians`,
     CLIENTS_URL: `${BASE_URL}/clients`,

@@ -1,11 +1,10 @@
-
 .credentialsContainer {
     flex: 1;
     display: flex;
     flex-direction: column;
     background-color: var(--background);
-    width: 50%;
-    height: 90%;
+    width: 40%;
+    height: auto;
     max-width: 1000px;
     min-width: 100px;
     padding: 2%;
@@ -15,7 +14,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-    gap: 3%;
+    gap: 20px;
 }
 
 .credentialsHeader {
@@ -64,16 +63,11 @@
 .labelField {
     font-family: var(--main-font), sans-serif;
     color: var(--text);
-    width: 150px;
-    min-width: 100px;
-    max-width: 300px;
-    margin-right: 20px;
 }
 
 .textField {
+    flex: 1;
     width: 60%;
-    max-width: 250px;
-    min-width: 100px;
     position: relative;
 }
 
@@ -83,3 +77,50 @@
     min-height: 30px;
     height: 60px;
 }
+@media screen and (max-width: 768px) {
+    .credentialsContainer {
+        width: 90%;
+        height: 80%;
+        max-height: 90%;
+        overflow-y: auto;
+        padding: 4%;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    }
+
+    .credentialsTitle {
+        font-size: 1.4rem;
+        text-align: center;
+    }
+
+    .credentialsText {
+        font-size: 1.3rem;
+    }
+
+    .gridItem {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .labelField {
+        width: 100%;
+        text-align: left;
+        margin-bottom: 2%;
+        font-size: 1rem;
+    }
+
+    .textField {
+        width: 100%;
+        max-width: none;
+        margin-bottom: 3%;
+    }
+
+    .logInButton {
+        width: 100%;
+        height: 50px;
+    }
+}
+

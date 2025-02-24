@@ -1,18 +1,37 @@
-import {CustomButton, DropDownList, Searchbar, ServiceOrderCreationPopup, Sidebar, Table, UserBar} from "../components"
+import {
+    CustomButton,
+    DropDownList,
+    Searchbar,
+    ServiceOrderCreationPopup,
+    ServiceOrderEditionPopup,
+    Sidebar,
+    Table,
+    TableColumns,
+    UserBar
+} from "../../components"
 import React, {useContext, useEffect, useState} from "react";
-import "../styles"
-import {sortData, Titles} from "../utils";
-import {TableColumns} from "../components";
-import {PlusIcon} from "../assets";
-import {AppContext} from "../context";
+import "../../styles"
+import {sortData, Titles} from "../../utils";
+import {PlusIcon} from "../../assets";
+import {AppContext} from "../../context";
 
 export const ServiceOrdersPage = () => {
 
-    const { fetchData ,filteredServiceOrders, setFilteredServiceOrders, searchServiceOrders, loading } = useContext(AppContext);
+    const {
+        filteredServiceOrders,
+        setFilteredServiceOrders,
+        searchServiceOrders,
+        loading,
+        user,
+        setEditionTrigger,
+        editionTrigger,
+        selectedRow,
+        fetchData
+    } = useContext(AppContext);
 
     const [triggerButton, setTriggerButton] = useState(false);
 
-    const columns = TableColumns(Titles.serviceOrdersPageTitle);
+    const columns = TableColumns(Titles.serviceOrdersPageTitle, user);
 
     const handleSelection = (columnName) => {
         sortData(columnName, columns, filteredServiceOrders, setFilteredServiceOrders);
@@ -35,13 +54,16 @@ export const ServiceOrdersPage = () => {
                         className={"dropDownListContainer"}
                     />
                     <Searchbar onSearch={(input) => searchServiceOrders(input)}/>
-                    <CustomButton
-                        className="addButton"
-                        icon={<PlusIcon/>}
-                        setTriggerButton={setTriggerButton}
-                    >
-                        Add service order
-                    </CustomButton>
+                    {user?.role !== "USER" ?
+                        <CustomButton
+                            className="addButton"
+                            icon={<PlusIcon/>}
+                            setTriggerButton={setTriggerButton}
+                        >
+                            Add service order
+                        </CustomButton>
+                        : null
+                    }
                 </div>
                 {!loading ? (
                     <Table
@@ -54,6 +76,12 @@ export const ServiceOrdersPage = () => {
             <ServiceOrderCreationPopup
                 triggerButton={triggerButton}
                 setTriggerButton={setTriggerButton}
+            />
+
+            <ServiceOrderEditionPopup
+                triggerButton={editionTrigger}
+                setTriggerButton={setEditionTrigger}
+                row={selectedRow}
             />
         </div>
 

@@ -23,6 +23,7 @@ export const Titles = {
     techniciansPageTitle: "Technicians",
     clientsPageTitle: "Clients",
     serviceOrdersPageTitle: "Service Orders",
+    userServiceOrdersPageTitle: "Your Service Orders",
     profileTitle: "Your Profile",
     loginTitle: "Log in",
     logOutTitle: "Log Out",

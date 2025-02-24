@@ -15,7 +15,6 @@ table {
     border-collapse: collapse;
     border-spacing: 0;
     text-align: left;
-    word-wrap: break-word;
 }
 
 thead {
@@ -73,5 +72,33 @@ tbody tr {
     font-family: var(--main-font), serif;
     margin-top: 20px;
 }
+
+@media screen and (max-width: 768px) {
+    th, td {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+    }
+
+    .loading, .error, .no-data {
+        font-size: 1rem;
+        margin-top: 10px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    th, td {
+        font-size: 0.7rem;
+        padding: 5px 2px;
+    }
+
+    .tableContainer {
+        width: 100%;
+    }
+
+    .loading, .error, .no-data {
+        font-size: 0.9rem;
+    }
+}
+
 
 

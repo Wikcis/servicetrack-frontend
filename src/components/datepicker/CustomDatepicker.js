@@ -6,9 +6,9 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import 'dayjs/locale/en-gb';
 import dayjs from "dayjs";
 
-export const CustomDatepicker = ({onSelectedDate, title, className, minDate, maxDate, defaultValue}) => {
+export const CustomDatepicker = ({onSelectedDate, title, className, minDate, maxDate, value}) => {
 
-    const [selectedDate, setSelectedDate] = useState();
+    const [selectedDate, setSelectedDate] = useState(dayjs(Date.parse(value)) || dayjs());
 
     const handleChange = (date) => {
         setSelectedDate(date);
@@ -25,7 +25,6 @@ export const CustomDatepicker = ({onSelectedDate, title, className, minDate, max
                     value={selectedDate}
                     minDate={minDate}
                     maxDate={maxDate}
-                    defaultValue={defaultValue}
                 />
             </ThemeProvider>
         </LocalizationProvider>

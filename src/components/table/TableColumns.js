@@ -1,8 +1,9 @@
-import React, {Fragment} from "react";
+import React, {Fragment, useContext} from "react";
 import {EditDeleteIconButtonsContainer} from "../iconButton/EditDeleteIconButtonsContainer";
 import {Titles} from "../../utils";
+import {AppContext} from "../../context";
 
-const checkBoxColumn = {
+const numberColumn = {
     Header: "Nr",
     accessor: "checkBox",
     style: {width: "5%"},
@@ -21,9 +22,9 @@ const emailColumn = {
     style: {width: "22%"},
 }
 
-const createTechniciansColumns = (type) => [
+const createTechniciansColumns = (type, role) => [
 
-    checkBoxColumn,
+    numberColumn,
     {
         Header: "First Name",
         accessor: "firstName",
@@ -41,17 +42,23 @@ const createTechniciansColumns = (type) => [
         accessor: "numberOfServices",
         style: {width: "10%"},
     },
-    {
-        Header: "",
-        accessor: "edition",
-        style: {width: "12%"},
-        Cell: ({row}) => <EditDeleteIconButtonsContainer type={type} row={row}/>,
-    },
+    ...(role !== "USER"
+        ? [
+            {
+                Header: "",
+                accessor: "edition",
+                style: { width: "7%" },
+                Cell: ({ row }) => (
+                    <EditDeleteIconButtonsContainer type={type} row={row} />
+                ),
+            },
+        ]
+        : []),
 ];
 
-const createClientColumns = (type) => [
+const createClientColumns = (type, role) => [
 
-    checkBoxColumn,
+    numberColumn,
     {
         Header: "Name",
         accessor: "name",
@@ -69,18 +76,70 @@ const createClientColumns = (type) => [
         accessor: "numberOfServices",
         style: {width: "10%"},
     },
-    {
-        Header: "",
-        accessor: "edition",
-        style: {width: "12%"},
-        Cell: ({row}) => (
-            <EditDeleteIconButtonsContainer type={type} row={row}/>
-        ),
-    },
+    ...(role !== "USER"
+        ? [
+            {
+                Header: "",
+                accessor: "edition",
+                style: { width: "7%" },
+                Cell: ({ row }) => (
+                    <EditDeleteIconButtonsContainer type={type} row={row} />
+                ),
+            },
+        ]
+        : []),
 ];
 
-const createServiceOrdersColumns = (type) => [
-    checkBoxColumn,
+const createServiceOrdersColumns = (type, role) => [
+    numberColumn,
+    {
+        Header: "Client Name",
+        accessor: "clientName",
+        style: {width: "15%"},
+    },
+    {
+        Header: "Type of Service",
+        accessor: "serviceType",
+        style: {width: "15%"},
+    },
+    {
+        Header: "Service Format",
+        accessor: "serviceFormat",
+        style: {width: "12%"},
+    },
+    {
+        Header: "Time of service",
+        accessor: "dateTimeOfService",
+        style: {width: "15%"},
+        Cell: ({row}) => (
+            <Fragment>{formatDateTime(row.original.dateTimeOfService)}</Fragment>
+        ),
+    },
+    {
+        Header: "Status",
+        accessor: "status",
+        style: {width: "12%"},
+    },
+    {
+        Header: "Duration of service",
+        accessor: "serviceDuration",
+        style: {width: "12%"},
+    },
+    ...(role !== "USER"
+        ? [
+            {
+                Header: "",
+                accessor: "edition",
+                style: {width: "7%"},
+                Cell: ({row}) => <EditDeleteIconButtonsContainer type={type} row={row}/>
+            },
+        ]
+        : []),
+
+];
+
+const createUserServiceOrdersColumns = (type) => [
+    numberColumn,
     {
         Header: "Client Name",
         accessor: "clientName",
@@ -117,7 +176,7 @@ const createServiceOrdersColumns = (type) => [
     {
         Header: "",
         accessor: "edition",
-        style: {width: "8%"},
+        style: {width: "7%"},
         Cell: ({row}) => <EditDeleteIconButtonsContainer type={type} row={row}/>
     },
 ];
@@ -139,14 +198,19 @@ const formatDateTime = (dateTime) => {
     }
 };
 
-export const TableColumns = (type) => {
+export const TableColumns = (type, user) => {
+
+    const role = user?.role;
+
     switch (type) {
         case Titles.techniciansPageTitle:
-            return createTechniciansColumns(type);
+            return createTechniciansColumns(type, role);
         case Titles.clientsPageTitle:
-            return createClientColumns(type);
+            return createClientColumns(type, role);
         case Titles.serviceOrdersPageTitle:
-            return createServiceOrdersColumns(type);
+            return createServiceOrdersColumns(type, role);
+        case Titles.userServiceOrdersPageTitle:
+            return createUserServiceOrdersColumns(type);
         default:
             return [];
     }

@@ -2,7 +2,6 @@ import {saveSecureItem} from "./apiFunctions";
 import {postMethod} from "../services";
 import {REST_API_URLS, token} from "../context";
 
-
 export async function loginUser(email, password) {
 
     try {
@@ -10,17 +9,14 @@ export async function loginUser(email, password) {
             email: email,
             password: password
         });
-        console.log("login URL: ", REST_API_URLS.LOGIN_URL);
+
         const loginResponse = await postMethod(REST_API_URLS.LOGIN_URL, loginRequest);
-
-        console.log("login respones: %j", loginResponse);
-
 
         await saveSecureItem(token, loginResponse.token);
 
         return loginResponse.token;
     } catch (error) {
-        console.error('Login error:', error);
+        console.error('Login error: ' + error);
         return null
     }
 }

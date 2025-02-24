@@ -1,21 +1,35 @@
-import {CustomButton, CustomTextField, EmptyFieldsPopup, Sidebar, WrongValuePopup} from "../components";
-import React from "react";
-import "../styles";
-import {Titles} from "../utils";
-import "../components";
-import {loginUser} from "../api/auth";
+import {
+    CustomButton,
+    CustomPassword,
+    CustomTextField,
+    EmptyFieldsPopup,
+    LoggedIn, Registered,
+    Sidebar,
+    WrongValuePopup
+} from "../../components";
+import React, {useContext} from "react";
+import "../../styles";
+import {Titles} from "../../utils";
+import "../../components";
+import {loginUser} from "../../api/auth";
 import {useNavigate} from "react-router-dom";
-import {REST_API_URLS} from "../api/apiConstants";
+import {REST_API_URLS} from "../../api/apiConstants";
+import {NotExistingUserPopup} from "../../components/popup/errorPopup/NotExistingUserPopup";
+import {AppContext} from "../../context";
 
 export const LoginPage = () => {
 
     const navigate = useNavigate();
 
+    const {fetchUser, fetchData, setLoggedIn, loggedIn, register, setRegister} = useContext(AppContext);
+
     const [emptyWarningTrigger, setEmptyWarningTrigger] = React.useState(false);
     const [wrongValuesTrigger, setWrongValuesTrigger] = React.useState(false);
+    const [notExistingUserTrigger, setNotExistingUserTrigger] = React.useState(false);
 
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
+    const [validate, setValidate] = React.useState(false);
 
     const handleLogin = async () => {
 
@@ -24,14 +38,17 @@ export const LoginPage = () => {
             return null;
         }
 
-        const res = await loginUser(email, password);
+        const res = await loginUser(email.toLowerCase(), password);
 
         if (res) {
-            alert("Successful log in !");
+            setLoggedIn(true);
+
+            await fetchUser();
+            await fetchData();
 
             navigate(REST_API_URLS.ONLY_TECHNICIANS_URL);
         } else {
-            setWrongValuesTrigger(true);
+            setNotExistingUserTrigger(true);
             return null;
         }
     };
@@ -52,7 +69,7 @@ export const LoginPage = () => {
                                href={true}
                                onClick={() => navigate(REST_API_URLS.ONLY_REGISTRATION_URL)}
                             >
-                                Sign up
+                                {" Sign up"}
                             </a>
                         </h3>
                     </div>
@@ -63,7 +80,10 @@ export const LoginPage = () => {
                             <CustomTextField
                                 label={"Email"}
                                 setText={setEmail}
+                                email={true}
                                 maxLength={32}
+                                required={true}
+                                validate={validate}
                             />
                         </span>
                     </div>
@@ -71,9 +91,13 @@ export const LoginPage = () => {
                     <div className="gridItem">
                         <span className="labelField">Enter your password</span>
                         <span className="textField">
-                            <CustomTextField
+                            <CustomPassword
+                                password={password}
+                                setPassword={setPassword}
                                 label={"Password"}
-                                setText={setPassword}
+                                required={true}
+                                validate={validate}
+                                minLength={9}
                                 maxLength={64}
                             />
                         </span>
@@ -84,6 +108,7 @@ export const LoginPage = () => {
                             className="logInButton"
                             type={Titles.loginTitle}
                             credentials={handleLogin}
+                            validate={setValidate}
                         >
                             Log in
                         </CustomButton>
@@ -98,6 +123,21 @@ export const LoginPage = () => {
             <WrongValuePopup
                 triggerButton={wrongValuesTrigger}
                 setTriggerButton={setWrongValuesTrigger}
+            />
+
+            <NotExistingUserPopup
+                triggerButton={notExistingUserTrigger}
+                setTriggerButton={setNotExistingUserTrigger}
+            />
+
+            <LoggedIn
+                triggerButton={loggedIn}
+                setTriggerButton={setLoggedIn}
+            />
+
+            <Registered
+                triggerButton={register}
+                setTriggerButton={setRegister}
             />
         </div>
     );

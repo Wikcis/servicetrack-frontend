@@ -1,14 +1,12 @@
-import React, {Fragment, useContext, useEffect} from "react";
+import React, {useContext, useEffect} from "react";
 import {Title} from "../title/Title";
 import {AppContext, REST_API_URLS} from "../../context";
 import {ProfilePageIcon} from "../../assets";
 import {useNavigate} from "react-router-dom";
 
 export const UserBar = ({title}) => {
-
     const navigate = useNavigate();
-    const {fetchUser, user} = useContext(AppContext);
-
+    const {user, fetchUser} = useContext(AppContext);
 
     useEffect(() => {
         fetchUser();
@@ -18,10 +16,18 @@ export const UserBar = ({title}) => {
         <div className="userBarContainer">
             <div className="userWithIconContainer">
                 <div className="userInfoContainer">
-                    <div className="userNameContainer">
-                        <span>{user.firstName} {user.lastName}</span>
-                    </div>
-                    <Fragment>{user.phoneNumber}</Fragment>
+                    <span>
+                        {user?.role === "USER" ? "Technician: " : null}
+                        <span className="userNameContainer">
+                            {user.firstName} {user.lastName}
+                        </span>
+                    </span>
+                    {user?.role === "USER" ?
+                        <span>phone number:
+                            <span className="phoneNumber">
+                                {user.phoneNumber}
+                            </span>
+                        </span> : null}
                 </div>
                 <ProfilePageIcon
                     className="profileIcon"
