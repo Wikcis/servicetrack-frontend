@@ -1,4 +1,4 @@
-const BASE_URL = "https://servicetrack-backend-1.onrender.com";
+const BASE_URL = "http://localhost:8080";
 
 export const REST_API_URLS = {
     BASE_URL,

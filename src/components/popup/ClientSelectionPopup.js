@@ -57,7 +57,7 @@ export const ClientSelectionPopup = ({triggerButton, setTriggerButton}) => {
                     <div className="singleColumnPopUpContainer">
 
                         <div className="popupHeader">
-                            <h3 className="popupTitle">Select Time Range</h3>
+                            <h3 className="popupTitle">Select Client</h3>
                             <IconXButton className="closeButton" setTriggerButton={setTriggerButton}/>
                         </div>
 
